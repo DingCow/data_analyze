@@ -1,0 +1,347 @@
+<style>
+  .intro {
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    border-radius: 18px;
+    border: 1px solid rgba(41, 63, 90, 0.14);
+    background: linear-gradient(180deg, #fbfdff 0%, #f3f7fb 100%);
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .card {
+    border-radius: 24px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(30, 51, 77, 0.12);
+    box-shadow: 0 18px 36px rgba(20, 38, 58, 0.08);
+  }
+
+  .card-image {
+    padding: 16px;
+    border-bottom: 1px solid rgba(30, 51, 77, 0.08);
+  }
+
+  .mock {
+    min-height: 310px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(29, 53, 79, 0.08);
+  }
+
+  .nav {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 8px;
+  }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  .body {
+    padding: 16px;
+  }
+
+  .hero {
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .block {
+    min-height: 84px;
+    border-radius: 14px;
+    border: 1px solid rgba(29, 53, 79, 0.08);
+  }
+
+  .line {
+    height: 10px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+
+  .line.short { width: 38%; }
+  .line.mid { width: 66%; }
+  .line.long { width: 100%; }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .pill {
+    height: 24px;
+    min-width: 72px;
+    border-radius: 999px;
+  }
+
+  .theme-a {
+    background: linear-gradient(180deg, #f4f7fb 0%, #edf2f7 100%);
+  }
+
+  .theme-a .nav {
+    background: rgba(255, 255, 255, 0.78);
+    color: #39526d;
+  }
+
+  .theme-a .body {
+    background:
+      radial-gradient(circle at top right, rgba(73, 112, 151, 0.12), transparent 34%),
+      linear-gradient(180deg, #f4f7fb 0%, #edf2f7 100%);
+  }
+
+  .theme-a .hero {
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(63, 88, 118, 0.12);
+  }
+
+  .theme-a .block {
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .theme-a .line,
+  .theme-a .pill {
+    background: #d7e1ea;
+  }
+
+  .theme-b {
+    background: linear-gradient(180deg, #f8f2ea 0%, #fffdfa 100%);
+  }
+
+  .theme-b .nav {
+    background: rgba(255, 250, 245, 0.85);
+    color: #8b5b29;
+  }
+
+  .theme-b .body {
+    background:
+      linear-gradient(135deg, rgba(197, 131, 68, 0.08), transparent 35%),
+      linear-gradient(180deg, #f8f2ea 0%, #fffdfa 100%);
+  }
+
+  .theme-b .hero {
+    background: rgba(255, 252, 247, 0.92);
+    border: 1px solid rgba(151, 100, 46, 0.12);
+  }
+
+  .theme-b .block {
+    background: rgba(255, 252, 247, 0.9);
+  }
+
+  .theme-b .line,
+  .theme-b .pill {
+    background: #ead8c5;
+  }
+
+  .theme-c {
+    background: linear-gradient(180deg, #eef7f5 0%, #f9fcfb 100%);
+  }
+
+  .theme-c .nav {
+    background: rgba(247, 252, 250, 0.86);
+    color: #1f6b5a;
+  }
+
+  .theme-c .body {
+    background:
+      radial-gradient(circle at top left, rgba(33, 118, 97, 0.12), transparent 30%),
+      linear-gradient(180deg, #eef7f5 0%, #f9fcfb 100%);
+  }
+
+  .theme-c .hero {
+    background: rgba(250, 255, 253, 0.92);
+    border: 1px solid rgba(36, 108, 91, 0.12);
+  }
+
+  .theme-c .block {
+    background: rgba(250, 255, 253, 0.92);
+  }
+
+  .theme-c .line,
+  .theme-c .pill {
+    background: #cfe6df;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .badge.rec {
+    background: #e8f3ec;
+    color: #0d5a42;
+  }
+
+  .badge.alt {
+    background: #eef2f7;
+    color: #35506d;
+  }
+
+  .card-body p,
+  .card-body li {
+    color: #4f6478;
+    line-height: 1.6;
+  }
+
+  .compact-list {
+    margin: 12px 0 0;
+    padding-left: 18px;
+  }
+
+  .compact-list li {
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 1100px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<h2>首页视觉气质方向</h2>
+<p class="subtitle">结构已经定了，现在选“它给人的第一印象”。这一步主要影响字体、色彩、留白、卡片语气和品牌感。</p>
+
+<div class="intro">
+  你前面表达的是“不专业、不满意”，所以这里我没有给你做花哨风格，而是都围绕
+  <strong>可信、清晰、像真实产品</strong>
+  去展开，只是专业感的呈现方式不同。
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="A" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mock theme-a">
+        <div class="nav">
+          <span class="nav-dot"></span><span class="nav-dot"></span><span class="nav-dot"></span>
+        </div>
+        <div class="body">
+          <div class="hero">
+            <div class="line short"></div>
+            <div class="line mid"></div>
+            <div class="line long"></div>
+            <div class="pill-row">
+              <div class="pill"></div>
+              <div class="pill"></div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="block"></div>
+            <div class="block"></div>
+            <div class="block"></div>
+            <div class="block"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="badge rec">A · 我推荐</div>
+      <h3>冷静的分析工作台</h3>
+      <p>偏蓝灰、克制、轻商务，像专业分析工具而不是营销页面。强调可信度、秩序感和长期使用的耐看度。</p>
+      <ul class="compact-list">
+        <li>优点：最稳，最不容易过时</li>
+        <li>缺点：如果处理不好，会偏保守</li>
+        <li>适合：你想先把“专业感”立住</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" data-choice="B" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mock theme-b">
+        <div class="nav">
+          <span class="nav-dot"></span><span class="nav-dot"></span><span class="nav-dot"></span>
+        </div>
+        <div class="body">
+          <div class="hero">
+            <div class="line short"></div>
+            <div class="line long"></div>
+            <div class="line mid"></div>
+            <div class="pill-row">
+              <div class="pill"></div>
+              <div class="pill"></div>
+              <div class="pill"></div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="block"></div>
+            <div class="block"></div>
+            <div class="block"></div>
+            <div class="block"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="badge alt">B · 更有人味</div>
+      <h3>编辑型分析助手</h3>
+      <p>带一点杂志和研究报告的气质，颜色偏暖，内容更像“分析师在与你协作”，而不是冷冰冰的控制台。</p>
+      <ul class="compact-list">
+        <li>优点：更有记忆点，文案更容易显得高级</li>
+        <li>缺点：稍微没控好就会偏“展示页”</li>
+        <li>适合：你想做得更有产品气质，而不只是工具</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" data-choice="C" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mock theme-c">
+        <div class="nav">
+          <span class="nav-dot"></span><span class="nav-dot"></span><span class="nav-dot"></span>
+        </div>
+        <div class="body">
+          <div class="hero">
+            <div class="line short"></div>
+            <div class="line long"></div>
+            <div class="line mid"></div>
+            <div class="pill-row">
+              <div class="pill"></div>
+              <div class="pill"></div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="block"></div>
+            <div class="block"></div>
+            <div class="block"></div>
+            <div class="block"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="badge alt">C · 更现代科技</div>
+      <h3>轻技术、轻智能助手</h3>
+      <p>偏青绿和轻科技感，会更像 AI 分析产品。比传统企业蓝更新，但仍然保持克制和理性。</p>
+      <ul class="compact-list">
+        <li>优点：更像新一代产品</li>
+        <li>缺点：需要更谨慎控制，避免显得轻浮</li>
+        <li>适合：你想保留一点 AI 产品辨识度</li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<h2>当前 Web 页面抽象出的框架方向</h2>
+<p class="subtitle">这一步先定结构，不定视觉细节。下面的布局都基于你现在的 Streamlit 页面职责拆分出来。</p>
+
+<div class="mockup" style="margin-bottom:20px;">
+  <div class="mockup-header">现状结构抽象</div>
+  <div class="mockup-body">
+    <div style="display:grid;gap:12px;">
+      <div class="placeholder" style="height:52px;">顶部：标题 / 数据源状态 / 清空会话</div>
+      <div class="placeholder" style="height:84px;">主输入区：输入问题 + 提交按钮</div>
+      <div class="placeholder" style="height:110px;">分析过程区：消息线程 / 过程摘要</div>
+      <div class="placeholder" style="height:180px;">结果工作区：摘要卡 / 图表 / 数据表 / 推荐追问</div>
+    </div>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="A" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A. 保守演进型</div>
+        <div class="mockup-body">
+          <div style="display:grid;gap:10px;">
+            <div class="placeholder" style="height:46px;">Header</div>
+            <div class="placeholder" style="height:74px;">Input Tray</div>
+            <div class="placeholder" style="height:88px;">Process Stream</div>
+            <div class="placeholder" style="height:170px;">Result Workspace</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 保持当前阅读顺序</h3>
+      <p>仍然是从上往下读：先输入，再看过程，再看结果。最稳，改动最小，也最贴近你现在的页面。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="B" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B. 分析工作台型</div>
+        <div class="mockup-body">
+          <div style="display:grid;gap:10px;">
+            <div class="placeholder" style="height:46px;">Header</div>
+            <div style="display:grid;grid-template-columns:0.9fr 1.8fr;gap:10px;">
+              <div class="placeholder" style="height:210px;">左侧：过程 / 历史</div>
+              <div class="placeholder" style="height:210px;">右侧：结果工作区</div>
+            </div>
+            <div class="placeholder" style="height:70px;">底部：统一输入托盘</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 更像桌面分析台</h3>
+      <p>把“过程”和“结果”并排，输入区固定成底部托盘。更像专业分析工具，我更推荐这个方向。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="C" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">C. 仪表盘首页型</div>
+        <div class="mockup-body">
+          <div style="display:grid;gap:10px;">
+            <div class="placeholder" style="height:56px;">Hero Header</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+              <div class="placeholder" style="height:70px;">Quick Card</div>
+              <div class="placeholder" style="height:70px;">Quick Card</div>
+              <div class="placeholder" style="height:70px;">Quick Card</div>
+            </div>
+            <div class="placeholder" style="height:74px;">Input</div>
+            <div class="placeholder" style="height:150px;">Results</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 首页感更强</h3>
+      <p>更像仪表盘产品首页，视觉会更活，但会偏离你现在“分析工作流”导向的页面节奏。</p>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top:18px;">
+  <div class="pros">
+    <h4>我当前推荐</h4>
+    <ul>
+      <li>优先选 B：最像“分析工作台”，也最适合后续继续做 Pencil 低保真框架。</li>
+      <li>如果你希望先稳住，再小步改，就选 A。</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>这一步先不处理</h4>
+    <ul>
+      <li>先不讨论颜色、玻璃质感、阴影和字体。</li>
+      <li>先不处理图表细节和组件皮肤。</li>
+    </ul>
+  </div>
+</div>
