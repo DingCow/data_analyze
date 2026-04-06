@@ -30,33 +30,36 @@ def inject_styles(layout: dict) -> None:
     css = """
         <style>
         :root {
-          --bg: #f2f4f7;
+          --bg: #f6f0e3;
           --bg-accent:
-            radial-gradient(circle at top left, rgba(167, 196, 255, 0.42), transparent 34%),
-            radial-gradient(circle at top right, rgba(255, 255, 255, 0.72), transparent 28%),
-            linear-gradient(180deg, #f7f8fb 0%, #eef2f6 48%, #f5f7fa 100%);
-          --surface: rgba(255, 255, 255, 0.58);
-          --surface-strong: rgba(255, 255, 255, 0.78);
-          --surface-muted: rgba(248, 250, 252, 0.72);
-          --surface-soft: rgba(255, 255, 255, 0.46);
-          --text: #111827;
-          --text-soft: #667085;
-          --line: rgba(15, 23, 42, 0.08);
-          --line-strong: rgba(15, 23, 42, 0.14);
-          --accent: #0f62fe;
-          --accent-soft: rgba(15, 98, 254, 0.12);
-          --accent-ink: #0b4ed0;
-          --accent-secondary: #1f2937;
-          --success: #2d6a4f;
-          --danger: #9a4d4d;
-          --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.08);
-          --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.07);
-          --shadow-sm: 0 10px 24px rgba(15, 23, 42, 0.05);
+            radial-gradient(circle at 12% 18%, rgba(180, 75, 37, 0.14), transparent 26%),
+            radial-gradient(circle at 84% 12%, rgba(29, 51, 74, 0.18), transparent 24%),
+            radial-gradient(circle at 50% 100%, rgba(184, 145, 71, 0.16), transparent 28%),
+            linear-gradient(180deg, #fbf7ef 0%, #f1e8d9 52%, #f4ede0 100%);
+          --surface: rgba(255, 251, 245, 0.74);
+          --surface-strong: rgba(255, 252, 247, 0.92);
+          --surface-muted: rgba(244, 235, 219, 0.72);
+          --surface-soft: rgba(255, 250, 242, 0.58);
+          --text: #1d2530;
+          --text-soft: #6f6556;
+          --line: rgba(61, 47, 34, 0.12);
+          --line-strong: rgba(61, 47, 34, 0.22);
+          --accent: #a24a2a;
+          --accent-soft: rgba(162, 74, 42, 0.12);
+          --accent-ink: #7d351d;
+          --accent-secondary: #23364a;
+          --success: #356b52;
+          --danger: #9d3f32;
+          --shadow-lg: 0 28px 70px rgba(74, 44, 24, 0.12);
+          --shadow-md: 0 18px 42px rgba(74, 44, 24, 0.10);
+          --shadow-sm: 0 12px 24px rgba(74, 44, 24, 0.08);
           --radius-2xl: 32px;
           --radius-xl: 26px;
           --radius-lg: 22px;
           --radius-md: 18px;
-          --workspace-stack-gap: 0.28rem;
+          --font-display: "Baskerville", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Songti SC", serif;
+          --font-body: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+          --workspace-stack-gap: 0.72rem;
           --workspace-title-size: __WORKSPACE_TITLE_SIZE__rem;
           --summary-title-size: __SUMMARY_TITLE_SIZE__rem;
           --summary-copy-size: __SUMMARY_COPY_SIZE__rem;
@@ -70,6 +73,7 @@ def inject_styles(layout: dict) -> None:
           background: var(--bg);
           background-image: var(--bg-accent);
           color: var(--text);
+          font-family: var(--font-body);
         }
 
         div[data-testid="stHeader"] {
@@ -87,44 +91,57 @@ def inject_styles(layout: dict) -> None:
         .top-shell {
           width: 100%;
           max-width: none;
-          padding: 0.14rem 0 0.02rem;
+          padding: 0.48rem 0 0.2rem;
           margin-top: 0;
           border-radius: 0;
           background: transparent;
           border: none;
           box-shadow: none;
           backdrop-filter: blur(16px);
+          position: relative;
+        }
+
+        .top-shell::before {
+          content: "ANALYSIS WORKBENCH";
+          display: block;
+          margin-bottom: 0.65rem;
+          color: var(--accent);
+          font-size: 0.72rem;
+          font-weight: 800;
+          letter-spacing: 0.28em;
         }
 
         .shell-title {
           margin: 0;
           color: var(--text);
-          font-family: "Iowan Old Style", "Palatino Linotype", "Songti SC", "PingFang SC", serif;
-          font-size: 2.18rem;
-          font-weight: 600;
-          letter-spacing: -0.02em;
+          font-family: var(--font-display);
+          font-size: 3.18rem;
+          font-weight: 700;
+          letter-spacing: -0.03em;
+          line-height: 0.92;
+          max-width: 8ch;
         }
 
         .shell-copy {
-          margin: 0.18rem 0 0;
-          max-width: 30rem;
+          margin: 0.58rem 0 0;
+          max-width: 35rem;
           color: var(--text-soft);
-          line-height: 1.55;
-          font-size: 0.82rem;
+          line-height: 1.7;
+          font-size: 0.94rem;
         }
 
         .header-meta-card {
           display: inline-flex;
           flex-direction: column;
           gap: 0;
-          padding: 0.18rem 0.24rem;
-          border-radius: 16px;
+          padding: 0.32rem 0.54rem;
+          border-radius: 999px;
           width: fit-content;
           min-width: 0;
           max-width: none;
           margin-left: auto;
-          background: var(--surface);
-          border: 1px solid rgba(255, 255, 255, 0.55);
+          background: linear-gradient(180deg, rgba(255, 251, 245, 0.92) 0%, rgba(246, 236, 216, 0.88) 100%);
+          border: 1px solid rgba(90, 70, 43, 0.12);
           box-shadow: var(--shadow-sm);
           backdrop-filter: blur(20px);
           overflow: hidden;
@@ -141,23 +158,25 @@ def inject_styles(layout: dict) -> None:
         .header-meta-title {
           margin: 0;
           color: var(--text-soft);
-          font-size: 0.58rem;
-          font-weight: 500;
+          font-size: 0.62rem;
+          font-weight: 700;
           line-height: 1.3;
           white-space: nowrap;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
         }
 
         .header-status {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          min-height: 22px;
-          min-width: 22px;
+          min-height: 24px;
+          min-width: 24px;
           padding: 0.04rem;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.64);
+          background: rgba(255, 255, 255, 0.72);
           flex-shrink: 0;
-          border: 1px solid rgba(15, 23, 42, 0.06);
+          border: 1px solid rgba(61, 47, 34, 0.08);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
         }
 
@@ -197,12 +216,33 @@ def inject_styles(layout: dict) -> None:
         }
 
         .conversation-panel.process-shell {
-          padding: 0.74rem 0.86rem 0.8rem;
-          border-radius: 24px;
-          background: rgba(255, 255, 255, 0.42);
-          border: 1px solid rgba(15, 23, 42, 0.06);
+          padding: 1.08rem 1.04rem 1.08rem;
+          border-radius: 28px;
+          background:
+            linear-gradient(180deg, rgba(255, 252, 247, 0.84) 0%, rgba(245, 236, 220, 0.72) 100%);
+          border: 1px solid rgba(61, 47, 34, 0.10);
           box-shadow: var(--shadow-md);
           backdrop-filter: blur(20px);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .conversation-panel.process-shell::before,
+        .summary-hero.results-shell::before,
+        .insight-card.insight-shell::before,
+        .plain-section.follow-up-shell::before,
+        .sample-result-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 38%),
+            repeating-linear-gradient(
+              90deg,
+              transparent 0 24px,
+              rgba(35, 54, 74, 0.018) 24px 25px
+            );
         }
 
         .workspace-panel {
@@ -240,7 +280,7 @@ def inject_styles(layout: dict) -> None:
         .panel-title {
           margin: 0.35rem 0 0;
           color: var(--text);
-          font-family: "Iowan Old Style", "Palatino Linotype", "Songti SC", "PingFang SC", serif;
+          font-family: var(--font-display);
           font-size: 1.55rem;
           font-weight: 600;
           letter-spacing: -0.01em;
@@ -292,11 +332,11 @@ def inject_styles(layout: dict) -> None:
         }
 
         .stream-headline {
-          margin: 0 0 0.22rem;
+          margin: 0 0 0.35rem;
           color: var(--accent-secondary);
           font-size: 0.72rem;
-          font-weight: 600;
-          letter-spacing: 0.06em;
+          font-weight: 800;
+          letter-spacing: 0.16em;
           text-transform: uppercase;
         }
 
@@ -324,8 +364,21 @@ def inject_styles(layout: dict) -> None:
 
         .conversation-thread {
           display: grid;
-          gap: 0.62rem;
-          margin-top: 0.42rem;
+          gap: 0.78rem;
+          margin-top: 0.56rem;
+          position: relative;
+          padding-left: 0.58rem;
+        }
+
+        .conversation-thread::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0.1rem;
+          bottom: 0.1rem;
+          width: 2px;
+          border-radius: 999px;
+          background: linear-gradient(180deg, rgba(162, 74, 42, 0.18), rgba(35, 54, 74, 0.12));
         }
 
         .thread-item,
@@ -349,12 +402,20 @@ def inject_styles(layout: dict) -> None:
         }
 
         .thread-item.user {
-          background: transparent;
-          border-color: transparent;
+          padding: 0.78rem 0.88rem 0.82rem;
+          background: rgba(255, 248, 240, 0.8);
+          border: 1px solid rgba(162, 74, 42, 0.12);
+          border-radius: 20px 20px 8px 20px;
+          margin-left: 0.18rem;
         }
 
         .thread-item.assistant {
-          background: transparent;
+          padding: 0.9rem 0.98rem 0.96rem;
+          background: rgba(255, 255, 255, 0.6);
+          border: 1px solid rgba(35, 54, 74, 0.08);
+          border-radius: 20px 20px 20px 8px;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          margin-left: 0.64rem;
         }
 
         .thread-label,
@@ -363,19 +424,34 @@ def inject_styles(layout: dict) -> None:
           display: inline-flex;
           align-items: center;
           min-height: 26px;
-          padding: 0;
+          padding: 0.12rem 0.48rem;
           border-radius: 999px;
-          background: transparent;
+          background: rgba(35, 54, 74, 0.08);
           color: #28405c;
-          font-size: 0.72rem;
+          font-size: 0.66rem;
           font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          width: fit-content;
+        }
+
+        .thread-item.user .thread-label {
+          background: rgba(162, 74, 42, 0.12);
+          color: var(--accent-ink);
+        }
+
+        .summary-status {
+          background: rgba(255, 248, 236, 0.16);
+          color: rgba(255, 244, 226, 0.86);
+          border: 1px solid rgba(255, 241, 218, 0.14);
         }
 
         .thread-content,
         .thread-content p,
         .thread-content li {
           color: var(--text);
-          line-height: 1.72;
+          line-height: 1.76;
+          font-size: 0.88rem;
         }
 
         .thread-content p,
@@ -388,6 +464,49 @@ def inject_styles(layout: dict) -> None:
           margin: 0.6rem 0 0.5rem;
           color: var(--accent-secondary);
           font-size: 1rem;
+        }
+
+        .thread-content strong,
+        .insight-card strong {
+          color: var(--accent-secondary);
+          font-weight: 800;
+        }
+
+        .thread-content code,
+        .insight-card code {
+          padding: 0.08rem 0.42rem;
+          border-radius: 999px;
+          background: rgba(35, 54, 74, 0.08);
+          color: var(--accent-secondary);
+          font-size: 0.84em;
+        }
+
+        .thread-content table,
+        .insight-card table {
+          width: 100%;
+          margin-top: 0.72rem;
+          border-collapse: collapse;
+          overflow: hidden;
+          border-radius: 16px;
+          background: rgba(255, 252, 247, 0.72);
+          border: 1px solid rgba(61, 47, 34, 0.10);
+        }
+
+        .thread-content th,
+        .thread-content td,
+        .insight-card th,
+        .insight-card td {
+          padding: 0.72rem 0.84rem;
+          text-align: left;
+          border-bottom: 1px solid rgba(61, 47, 34, 0.08);
+          font-size: 0.84rem;
+        }
+
+        .thread-content th,
+        .insight-card th {
+          background: rgba(35, 54, 74, 0.06);
+          color: var(--accent-secondary);
+          font-weight: 700;
         }
 
         .example-grid,
@@ -429,67 +548,125 @@ def inject_styles(layout: dict) -> None:
         }
 
         .summary-hero.results-shell {
-          margin-bottom: var(--workspace-stack-gap);
-          padding: 0.78rem 0.92rem 0.82rem;
-          border-radius: 26px;
-          background: rgba(255, 255, 255, 0.54);
-          border: 1px solid rgba(15, 23, 42, 0.06);
+          margin: 0;
+          padding: 1.18rem 1.18rem 1.14rem;
+          border-radius: 32px;
+          background:
+            linear-gradient(135deg, rgba(35, 54, 74, 0.94) 0%, rgba(31, 44, 57, 0.92) 55%, rgba(122, 53, 29, 0.9) 100%);
+          border: 1px solid rgba(255, 241, 218, 0.16);
           box-shadow: var(--shadow-md);
           backdrop-filter: blur(22px);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .summary-topline {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-bottom: 0.64rem;
+        }
+
+        .summary-kicker {
+          color: rgba(255, 244, 226, 0.72);
+          font-size: 0.72rem;
+          font-weight: 800;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
         }
 
         .summary-title {
-          margin: 0.22rem 0 0;
-          color: var(--text);
-          font-size: 1.18rem;
-          font-weight: 600;
-          letter-spacing: -0.01em;
-          line-height: 1.2;
+          margin: 0;
+          color: #fff8ed;
+          font-family: var(--font-display);
+          font-size: 2rem;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          line-height: 1.06;
+          max-width: 13ch;
         }
 
         .summary-copy {
           margin: 0.18rem 0 0;
-          color: var(--text-soft);
-          line-height: 1.58;
-          font-size: 0.68rem !important;
+          color: rgba(255, 242, 224, 0.82);
+          line-height: 1.65;
+          font-size: 0.82rem !important;
+          max-width: 46rem;
         }
 
         .metric-grid {
           display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 0.64rem;
-          margin-top: 0.56rem;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0.72rem;
+          margin-top: 0.98rem;
         }
 
         .metric-card {
-          padding: 0;
-          background: transparent;
-          border-color: transparent;
-          box-shadow: none;
+          padding: 0.96rem 0.94rem;
+          background: rgba(255, 248, 236, 0.10);
+          border: 1px solid rgba(255, 242, 224, 0.12);
+          border-radius: 20px;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         .metric-label {
           margin: 0;
-          color: var(--text-soft);
-          font-size: 0.68rem;
+          color: rgba(255, 242, 224, 0.66);
+          font-size: 0.66rem;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
         }
 
         .metric-value {
           margin: 0.18rem 0 0;
-          color: var(--accent-secondary);
-          font-size: 0.9rem;
-          font-weight: 600;
+          color: #fff8ed;
+          font-size: 1.14rem;
+          font-weight: 700;
         }
 
         .section-heading {
-          margin: 0 0 0.24rem;
+          margin: 0 0 0.32rem;
           color: var(--accent-secondary);
-          font-size: 1rem;
-          font-weight: 600;
+          font-size: 0.78rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.44rem;
+        }
+
+        .section-heading::before {
+          content: "";
+          display: inline-block;
+          width: 1.3rem;
+          height: 1px;
+          background: linear-gradient(90deg, var(--accent), rgba(162, 74, 42, 0.12));
         }
 
         .section-card {
-          margin-bottom: var(--workspace-stack-gap);
+          margin: 0;
+        }
+
+        .section-card > .section-heading {
+          margin-bottom: 0.32rem;
+        }
+
+        .chart-section {
+          margin: 0;
+        }
+
+        .table-section {
+          margin: -0.92rem 0 0;
+        }
+
+        .workspace-gap {
+          height: var(--workspace-stack-gap);
+        }
+
+        .analytics-gap {
+          height: 0;
         }
 
         .insight-card h1,
@@ -501,27 +678,35 @@ def inject_styles(layout: dict) -> None:
         }
 
         .insight-card.insight-shell {
-          padding: 0.78rem 0.92rem 0.84rem;
-          border-radius: 26px;
-          background: rgba(255, 255, 255, 0.54);
-          border: 1px solid rgba(15, 23, 42, 0.06);
+          padding: 1.08rem 1.12rem 1.14rem;
+          border-radius: 30px;
+          background: linear-gradient(180deg, rgba(255, 252, 247, 0.86) 0%, rgba(247, 239, 225, 0.76) 100%);
+          border: 1px solid rgba(61, 47, 34, 0.10);
           box-shadow: var(--shadow-md);
           backdrop-filter: blur(22px);
-          margin-bottom: var(--workspace-stack-gap);
+          margin: 0;
+          position: relative;
+          overflow: hidden;
         }
 
         .insight-card h2,
         .insight-card h3 {
-          margin: 0.1rem 0 0.42rem;
-          font-size: 1.28rem;
+          margin: 0.08rem 0 0.42rem;
+          font-size: 1.56rem;
           font-weight: 700;
           line-height: 1.35;
+          font-family: var(--font-display);
         }
 
         .insight-card p,
         .insight-card ul {
           margin: 0.28rem 0 0;
           line-height: 1.75;
+        }
+
+        .insight-card ul,
+        .thread-content ul {
+          padding-left: 1.05rem;
         }
 
         .empty-copy {
@@ -570,11 +755,12 @@ def inject_styles(layout: dict) -> None:
 
         div[data-testid="stForm"] {
           margin-top: 0.82rem !important;
-          padding: 2rem 2rem 1.9rem !important;
+          padding: 2.14rem 2.06rem 2rem !important;
           background:
-            radial-gradient(circle at top left, rgba(15, 98, 254, 0.08), transparent 24%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(248, 250, 252, 0.66) 100%);
-          border: 1px solid rgba(255, 255, 255, 0.65);
+            radial-gradient(circle at top left, rgba(162, 74, 42, 0.10), transparent 24%),
+            radial-gradient(circle at right 18%, rgba(35, 54, 74, 0.08), transparent 22%),
+            linear-gradient(180deg, rgba(255, 252, 247, 0.88) 0%, rgba(244, 234, 218, 0.82) 100%);
+          border: 1px solid rgba(90, 70, 43, 0.12);
           box-shadow: var(--shadow-lg);
           border-radius: 30px !important;
           backdrop-filter: blur(24px);
@@ -602,8 +788,8 @@ def inject_styles(layout: dict) -> None:
         .input-caption {
           margin: 0 0 0.36rem;
           color: var(--text);
-          font-size: 1.05rem;
-          font-weight: 600;
+          font-size: 1.22rem;
+          font-weight: 700;
           letter-spacing: -0.01em;
           line-height: 1.3;
         }
@@ -611,26 +797,35 @@ def inject_styles(layout: dict) -> None:
         .input-copy {
           margin: 0 0 0.9rem;
           color: var(--text-soft);
-          font-size: 0.64rem;
-          line-height: 1.55;
+          font-size: 0.74rem;
+          line-height: 1.65;
           max-width: 34rem;
         }
 
         .input-shell div[data-testid="stTextInput"] input {
           min-height: 78px;
           border-radius: 24px;
-          border: 1px solid rgba(15, 23, 42, 0.08);
-          background: rgba(255, 255, 255, 0.78);
+          border: 1px solid rgba(61, 47, 34, 0.10);
+          background: rgba(255, 251, 245, 0.88);
           color: var(--text);
           box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.75),
-            0 8px 18px rgba(15, 23, 42, 0.04);
+            0 8px 18px rgba(74, 44, 24, 0.05);
           font-size: 1.08rem;
-          padding-left: 1rem;
+          padding-left: 1.05rem;
+          transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .input-shell div[data-testid="stTextInput"] input:focus {
+          border-color: rgba(162, 74, 42, 0.45);
+          box-shadow:
+            0 0 0 4px rgba(162, 74, 42, 0.10),
+            0 14px 28px rgba(74, 44, 24, 0.08);
+          transform: translateY(-1px);
         }
 
         .input-shell div[data-testid="stTextInput"] input::placeholder {
-          color: #7a8597;
+          color: #8a7d69;
           font-size: 0.78rem;
         }
 
@@ -638,27 +833,47 @@ def inject_styles(layout: dict) -> None:
         .input-shell button[kind="primaryFormSubmit"] {
           min-height: 78px;
           border-radius: 24px;
-          border: 1px solid rgba(15, 98, 254, 0.12);
-          background: linear-gradient(180deg, #0f62fe 0%, #0b4ed0 100%);
+          border: 1px solid rgba(122, 53, 29, 0.24);
+          background: linear-gradient(180deg, #b65431 0%, #8c3b22 100%);
           color: #ffffff;
           font-weight: 700;
           font-size: 1rem;
-          letter-spacing: 0.01em;
-          box-shadow: 0 18px 32px rgba(15, 98, 254, 0.22);
+          letter-spacing: 0.02em;
+          box-shadow: 0 18px 32px rgba(162, 74, 42, 0.24);
+          transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+        }
+
+        .input-shell .stButton > button:hover,
+        .input-shell button[kind="primaryFormSubmit"]:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 24px 40px rgba(162, 74, 42, 0.28);
+          filter: saturate(1.02);
+        }
+
+        .input-shell .stButton > button:active,
+        .input-shell button[kind="primaryFormSubmit"]:active {
+          transform: translateY(0);
         }
 
         .secondary-action .stButton > button {
           min-height: 34px;
           min-width: 124px;
           padding: 0.28rem 0.72rem;
-          border-radius: 12px;
+          border-radius: 999px;
           border: 1px solid var(--line);
-          background: rgba(255, 252, 247, 0.8);
+          background: rgba(255, 250, 242, 0.88);
           color: var(--text);
           font-size: 0.74rem;
-          font-weight: 500;
+          font-weight: 700;
           box-shadow: none;
           white-space: nowrap;
+          transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+        }
+
+        .secondary-action .stButton > button:hover {
+          border-color: rgba(162, 74, 42, 0.22);
+          background: rgba(255, 247, 236, 0.96);
+          transform: translateY(-1px);
         }
 
         .secondary-action.preview-action .stButton > button {
@@ -673,18 +888,25 @@ def inject_styles(layout: dict) -> None:
           font-weight: 500;
         }
 
+        .secondary-action.preview-action .stButton > button:hover {
+          background: rgba(255, 250, 242, 0.92);
+          color: var(--accent-ink);
+        }
+
         .secondary-action.reset-action .stButton > button {
           min-width: 128px;
         }
 
         .sample-result-card {
           margin-top: 0.85rem;
-          padding: 1.2rem 1.2rem;
-          border-radius: 26px;
-          background: rgba(255, 255, 255, 0.54);
-          border: 1px solid rgba(15, 23, 42, 0.06);
+          padding: 1.28rem 1.28rem;
+          border-radius: 28px;
+          background: linear-gradient(180deg, rgba(255, 252, 247, 0.86) 0%, rgba(246, 237, 222, 0.78) 100%);
+          border: 1px solid rgba(61, 47, 34, 0.10);
           box-shadow: var(--shadow-md);
           backdrop-filter: blur(22px);
+          position: relative;
+          overflow: hidden;
         }
 
         .sample-result-row {
@@ -721,20 +943,20 @@ def inject_styles(layout: dict) -> None:
           margin-top: 0.2rem;
           padding: 0.8rem 0.82rem;
           border-radius: 16px;
-          background: rgba(47, 92, 243, 0.07);
+          background: rgba(162, 74, 42, 0.08);
           border-top: none;
         }
 
         .plain-section {
-          margin-top: 1rem;
+          margin: 0;
         }
 
         .plain-section.suggested-questions {
           margin: 0.15rem 0 0.95rem;
-          padding: 0.9rem 1rem 0.95rem;
-          border-radius: 24px;
-          background: rgba(255, 255, 255, 0.54);
-          border: 1px solid rgba(15, 23, 42, 0.06);
+          padding: 1.02rem 1.08rem 1.08rem;
+          border-radius: 28px;
+          background: rgba(255, 252, 247, 0.62);
+          border: 1px solid rgba(61, 47, 34, 0.08);
           box-shadow: var(--shadow-md);
           backdrop-filter: blur(22px);
         }
@@ -745,13 +967,15 @@ def inject_styles(layout: dict) -> None:
         }
 
         .plain-section.follow-up-shell {
-          margin-top: var(--workspace-stack-gap);
-          padding: 0.78rem 0.92rem 0.82rem;
-          border-radius: 24px;
-          background: rgba(255, 255, 255, 0.54);
-          border: 1px solid rgba(15, 23, 42, 0.06);
+          margin: 0;
+          padding: 1rem 1.08rem 1.08rem;
+          border-radius: 28px;
+          background: linear-gradient(180deg, rgba(255, 252, 247, 0.84) 0%, rgba(246, 237, 222, 0.76) 100%);
+          border: 1px solid rgba(61, 47, 34, 0.10);
           box-shadow: var(--shadow-md);
           backdrop-filter: blur(22px);
+          position: relative;
+          overflow: hidden;
         }
 
         .plain-list {
@@ -761,8 +985,14 @@ def inject_styles(layout: dict) -> None:
         }
 
         .plain-list-item {
-          padding-left: 0.95rem;
+          padding: 0.18rem 0 0.18rem 1.15rem;
           position: relative;
+        }
+
+        .plain-list-item + .plain-list-item {
+          border-top: 1px dashed rgba(61, 47, 34, 0.08);
+          padding-top: 0.7rem;
+          margin-top: 0.08rem;
         }
 
         .plain-list-item::before {
@@ -773,20 +1003,96 @@ def inject_styles(layout: dict) -> None:
           width: 6px;
           height: 6px;
           border-radius: 999px;
-          background: rgba(17, 24, 39, 0.32);
+          background: rgba(162, 74, 42, 0.56);
+        }
+
+        .table-shell {
+          padding: 0.5rem;
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+          background: linear-gradient(180deg, rgba(255, 252, 247, 0.9) 0%, rgba(248, 240, 228, 0.86) 100%);
+          border: 1px solid var(--line);
+          box-shadow: var(--shadow-sm);
+          backdrop-filter: blur(18px);
+        }
+
+        .table-scroll {
+          overflow-x: auto;
+          overflow-y: auto;
+          max-height: 31rem;
+          border-radius: 16px;
+        }
+
+        .data-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-family: var(--font-body);
+          background: rgba(255, 252, 247, 0.92);
+        }
+
+        .data-table thead th {
+          padding: 0.82rem 0.88rem;
+          text-align: left;
+          background: rgba(35, 54, 74, 0.06);
+          color: var(--accent-secondary);
+          font-size: 0.92rem;
+          font-weight: 700;
+          border-bottom: 1px solid rgba(61, 47, 34, 0.10);
+          white-space: nowrap;
+        }
+
+        .data-table tbody td {
+          padding: 0.84rem 0.88rem;
+          color: var(--text);
+          font-size: 0.88rem;
+          border-bottom: 1px solid rgba(61, 47, 34, 0.08);
+          vertical-align: top;
+        }
+
+        .data-table tbody tr:nth-child(even) td {
+          background: rgba(255, 250, 242, 0.72);
+        }
+
+        .data-table tbody tr:last-child td {
+          border-bottom: none;
         }
 
         div[data-testid="stDataFrame"],
         div[data-testid="stPlotlyChart"] {
           border-radius: var(--radius-lg);
-          padding: 0.35rem;
-          margin-top: 0.12rem;
-          margin-bottom: 0.12rem;
+          padding: 0.5rem;
+          margin-top: 0;
+          margin-bottom: 0;
           overflow: hidden;
-          background: rgba(255, 255, 255, 0.54);
+          background: linear-gradient(180deg, rgba(255, 252, 247, 0.9) 0%, rgba(248, 240, 228, 0.86) 100%);
           border: 1px solid var(--line);
           box-shadow: var(--shadow-sm);
           backdrop-filter: blur(18px);
+        }
+
+        div[data-testid="stPlotlyChart"] > div {
+          border-radius: 16px;
+          overflow: hidden;
+        }
+
+        div[data-testid="stDataFrame"] [data-testid="stTable"] {
+          border-radius: 16px;
+          overflow: hidden;
+        }
+
+        div[data-testid="stDataFrame"] table {
+          font-family: var(--font-body);
+        }
+
+        div[data-testid="stDataFrame"] thead tr th {
+          background: rgba(35, 54, 74, 0.06);
+          color: var(--accent-secondary);
+          font-weight: 700;
+          border-bottom: 1px solid rgba(61, 47, 34, 0.10);
+        }
+
+        div[data-testid="stDataFrame"] tbody tr:nth-child(even) td {
+          background: rgba(255, 248, 239, 0.48);
         }
 
         @media (max-width: 1200px) {
@@ -798,6 +1104,12 @@ def inject_styles(layout: dict) -> None:
         }
 
         @media (max-width: 880px) {
+          .block-container {
+            padding-top: 1rem;
+            padding-left: 0.9rem;
+            padding-right: 0.9rem;
+          }
+
           .content-grid {
             grid-template-columns: 1fr;
           }
@@ -809,7 +1121,22 @@ def inject_styles(layout: dict) -> None:
           }
 
           .shell-title {
-            font-size: 1.5rem;
+            font-size: 2.2rem;
+            max-width: none;
+          }
+
+          .shell-copy {
+            max-width: none;
+          }
+
+          .thread-item.user,
+          .thread-item.assistant,
+          .summary-hero.results-shell,
+          .insight-card.insight-shell,
+          .plain-section.follow-up-shell,
+          .sample-result-card,
+          div[data-testid="stForm"] {
+            border-radius: 22px !important;
           }
 
           .input-caption {
@@ -819,6 +1146,10 @@ def inject_styles(layout: dict) -> None:
           .top-shell,
           .header-meta-card {
             max-width: none;
+          }
+
+          .metric-grid {
+            grid-template-columns: 1fr;
           }
         }
         </style>
@@ -1308,13 +1639,13 @@ def build_chart_layout() -> dict:
     """统一图表的紧凑布局，避免图表和下方模块之间出现过大空白。"""
     return dict(
         paper_bgcolor="rgba(255,255,255,0)",
-        plot_bgcolor="#ffffff",
-        font=dict(color="#162535"),
-        title=dict(font=dict(size=18, color="#17324b")),
-        margin=dict(l=20, r=20, t=40, b=8),
-        xaxis=dict(gridcolor="rgba(22,37,53,0.08)", zeroline=False),
-        yaxis=dict(gridcolor="rgba(22,37,53,0.08)", zeroline=False),
-        height=280,
+        plot_bgcolor="rgba(255,248,239,0.78)",
+        font=dict(color="#2b3440", family="Avenir Next, Segoe UI, PingFang SC, sans-serif"),
+        title=dict(font=dict(size=18, color="#23364a", family="Baskerville, Iowan Old Style, Songti SC, serif")),
+        margin=dict(l=20, r=20, t=46, b=8),
+        xaxis=dict(gridcolor="rgba(35,54,74,0.08)", zeroline=False, linecolor="rgba(61,47,34,0.10)"),
+        yaxis=dict(gridcolor="rgba(35,54,74,0.08)", zeroline=False, linecolor="rgba(61,47,34,0.10)"),
+        height=360,
     )
 
 
@@ -1341,7 +1672,7 @@ def render_chart(chart_config: dict, raw_rows: list[dict]) -> None:
             y=y_cols,
             title=title,
             markers=True,
-            color_discrete_sequence=["#234766", "#5d7d99", "#8fa7bb"],
+            color_discrete_sequence=["#23364a", "#a24a2a", "#c18a3d"],
         )
         fig.update_traces(line=dict(width=3), marker=dict(size=8))
         fig.update_layout(**common_layout)
@@ -1352,7 +1683,7 @@ def render_chart(chart_config: dict, raw_rows: list[dict]) -> None:
             x=x_col,
             y=y_cols[0],
             title=title,
-            color_discrete_sequence=["#234766"],
+            color_discrete_sequence=["#a24a2a"],
         )
         fig.update_layout(**common_layout)
         st.plotly_chart(fig, use_container_width=True)
@@ -1469,7 +1800,10 @@ def _render_summary_hero(summary: dict) -> None:
     st.markdown(
         f"""
         <div class="summary-hero results-shell">
-          {'<div class="summary-status">' + html.escape(summary["mode_label"]) + '</div>' if summary["mode_label"] else ''}
+          <div class="summary-topline">
+            <div class="summary-kicker">Result Board</div>
+            {'<div class="summary-status">' + html.escape(summary["mode_label"]) + '</div>' if summary["mode_label"] else ''}
+          </div>
           <h3 class="summary-title">{html.escape(summary["title"])}</h3>
           <p class="summary-copy">{html.escape(summary["summary"])}</p>
           {'<p class="summary-copy">' + html.escape(summary["description"]) + '</p>' if summary["description"] else ''}
@@ -1496,6 +1830,40 @@ def _render_follow_up_cards(follow_ups: list[dict], title: str) -> None:
         <div class="plain-section follow-up-shell">
           <p class="section-heading">{html.escape(title)}</p>
           <div class="plain-list">{items}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_data_table_shell(raw_rows: list[dict], title: str) -> None:
+    """用 HTML 表格渲染关键数据，并把标题与表格合成一个整体块。"""
+    if not raw_rows:
+        return
+
+    columns = list(raw_rows[0].keys())
+    header_html = "".join(f"<th>{html.escape(str(column))}</th>" for column in columns)
+    body_html = "".join(
+        "<tr>"
+        + "".join(
+            f"<td>{html.escape('' if row.get(column) is None else str(row.get(column)))}</td>"
+            for column in columns
+        )
+        + "</tr>"
+        for row in raw_rows
+    )
+    st.markdown(
+        f"""
+        <div class="section-card table-section">
+          <p class="section-heading">{html.escape(title)}</p>
+          <div class="table-shell">
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead><tr>{header_html}</tr></thead>
+                <tbody>{body_html}</tbody>
+              </table>
+            </div>
+          </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1563,9 +1931,20 @@ def render_workspace(latest_result: dict | None) -> None:
     if mode == "empty":
         return
     else:
+        def render_workspace_gap() -> None:
+            """在右侧模块之间插入统一间距，避免依赖 Streamlit 内部 DOM。"""
+            st.markdown('<div class="workspace-gap"></div>', unsafe_allow_html=True)
+
+        def render_analytics_gap() -> None:
+            """单独收紧图表和表格之间的距离，不影响其它模块节奏。"""
+            st.markdown('<div class="analytics-gap"></div>', unsafe_allow_html=True)
+
         _render_summary_hero(workspace["summary"])
+        has_section_before = True
 
         if sections["show_insight"] and answer:
+            if has_section_before:
+                render_workspace_gap()
             st.markdown(
                 f"""
                 <div class="insight-card insight-shell">
@@ -1574,30 +1953,33 @@ def render_workspace(latest_result: dict | None) -> None:
                 """,
                 unsafe_allow_html=True,
             )
+            has_section_before = True
 
-        if sections["show_chart"] and chart_config and raw_rows:
-            st.markdown(
-                f"""
-                <div class="section-card">
-                  <p class="section-heading">{html.escape(workspace["chart_title"])}</p>
-                """,
-                unsafe_allow_html=True,
-            )
-            render_chart(chart_config, raw_rows)
-            st.markdown("</div>", unsafe_allow_html=True)
+        if (sections["show_chart"] and chart_config and raw_rows) or (sections["show_table"] and raw_rows):
+            if has_section_before:
+                render_workspace_gap()
+            analytics_block = st.container()
+            with analytics_block:
+                if sections["show_chart"] and chart_config and raw_rows:
+                    st.markdown(
+                        f"""
+                        <div class="section-card chart-section">
+                          <p class="section-heading">{html.escape(workspace["chart_title"])}</p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                    render_chart(chart_config, raw_rows)
 
-        if sections["show_table"] and raw_rows:
-            st.markdown(
-                f"""
-                <div class="section-card">
-                  <p class="section-heading">{html.escape(workspace["table_title"])}</p>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.dataframe(pd.DataFrame(raw_rows), width="stretch", height=calculate_table_height(len(raw_rows)))
-            st.markdown("</div>", unsafe_allow_html=True)
+                if sections["show_table"] and raw_rows:
+                    if sections["show_chart"] and chart_config and raw_rows:
+                        render_analytics_gap()
+                    _render_data_table_shell(raw_rows, workspace["table_title"])
+            has_section_before = True
 
         if workspace["follow_ups"]:
+            if has_section_before:
+                render_workspace_gap()
             _render_follow_up_cards(workspace["follow_ups"], workspace["follow_up_title"])
 
 
