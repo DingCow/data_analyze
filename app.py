@@ -26,1145 +26,686 @@ PAGE_TITLE = "Data Analyze Agent"
 
 
 def inject_styles(layout: dict) -> None:
-    """注入编辑型分析助手首页样式。"""
-    css = """
+    """注入与 .pen 设计稿一致的中心瀑布式桌面端样式。"""
+    css = f"""
         <style>
-        :root {
-          --bg: #f6f0e3;
-          --bg-accent:
-            radial-gradient(circle at 12% 18%, rgba(180, 75, 37, 0.14), transparent 26%),
-            radial-gradient(circle at 84% 12%, rgba(29, 51, 74, 0.18), transparent 24%),
-            radial-gradient(circle at 50% 100%, rgba(184, 145, 71, 0.16), transparent 28%),
-            linear-gradient(180deg, #fbf7ef 0%, #f1e8d9 52%, #f4ede0 100%);
-          --surface: rgba(255, 251, 245, 0.74);
-          --surface-strong: rgba(255, 252, 247, 0.92);
-          --surface-muted: rgba(244, 235, 219, 0.72);
-          --surface-soft: rgba(255, 250, 242, 0.58);
-          --text: #1d2530;
-          --text-soft: #6f6556;
-          --line: rgba(61, 47, 34, 0.12);
-          --line-strong: rgba(61, 47, 34, 0.22);
-          --accent: #a24a2a;
-          --accent-soft: rgba(162, 74, 42, 0.12);
-          --accent-ink: #7d351d;
-          --accent-secondary: #23364a;
-          --success: #356b52;
-          --danger: #9d3f32;
-          --shadow-lg: 0 28px 70px rgba(74, 44, 24, 0.12);
-          --shadow-md: 0 18px 42px rgba(74, 44, 24, 0.10);
-          --shadow-sm: 0 12px 24px rgba(74, 44, 24, 0.08);
-          --radius-2xl: 32px;
-          --radius-xl: 26px;
-          --radius-lg: 22px;
-          --radius-md: 18px;
-          --font-display: "Baskerville", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Songti SC", serif;
-          --font-body: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
-          --workspace-stack-gap: 0.72rem;
-          --workspace-title-size: __WORKSPACE_TITLE_SIZE__rem;
-          --summary-title-size: __SUMMARY_TITLE_SIZE__rem;
-          --summary-copy-size: __SUMMARY_COPY_SIZE__rem;
-          --summary-hero-padding: __SUMMARY_HERO_PADDING__rem;
-          --metric-card-padding-y: __METRIC_CARD_PADDING_Y__rem;
-          --metric-card-padding-x: __METRIC_CARD_PADDING_X__rem;
-          --metric-value-size: __METRIC_VALUE_SIZE__rem;
-        }
+        :root {{
+          --page-bg: #f5f7fa;
+          --page-bg-accent:
+            radial-gradient(circle at 16% 8%, rgba(220, 232, 245, 0.82), transparent 28%),
+            radial-gradient(circle at 82% 20%, rgba(230, 238, 246, 0.68), transparent 22%),
+            linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+          --surface: #fcfdfe;
+          --surface-subtle: #f7f9fb;
+          --surface-accent: #dcecf8;
+          --ink: #171c22;
+          --ink-soft: #5e6875;
+          --ink-muted: #7a8591;
+          --line: #d9e1e8;
+          --line-strong: #c7d2dc;
+          --hero: #11161d;
+          --hero-elevated: #1a212a;
+          --hero-line: #2d3742;
+          --hero-ink: #f5f7fa;
+          --accent: #4a9fd8;
+          --accent-soft: #dcecf8;
+          --shadow-xl: 0 18px 42px rgba(0, 0, 0, 0.10);
+          --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.08);
+          --shadow-md: 0 8px 22px rgba(0, 0, 0, 0.07);
+          --display: "Newsreader", "Iowan Old Style", "Palatino Linotype", "Songti SC", serif;
+          --body: "Funnel Sans", "Avenir Next", "Segoe UI", "PingFang SC", sans-serif;
+          --mono: "IBM Plex Mono", "SFMono-Regular", "SF Mono", monospace;
+          --page-max-width: {layout["content_max_width_px"]}px;
+          --section-gap: {layout["content_section_gap_rem"]}rem;
+        }}
 
-        .stApp {
-          background: var(--bg);
-          background-image: var(--bg-accent);
-          color: var(--text);
-          font-family: var(--font-body);
-        }
+        .stApp {{
+          background: var(--page-bg);
+          background-image: var(--page-bg-accent);
+          color: var(--ink);
+          font-family: var(--body);
+        }}
 
-        div[data-testid="stHeader"] {
+        header[data-testid="stHeader"],
+        div[data-testid="stHeader"] {{
           background: transparent;
-        }
+          height: 0;
+          min-height: 0;
+        }}
 
-        .block-container {
-          max-width: 1080px;
-          padding-top: 1.42rem;
-          padding-bottom: 1.2rem;
+        .stApp > header {{
+          background: transparent;
+        }}
+
+        div[data-testid="stToolbar"],
+        div[data-testid="stDecoration"],
+        div[data-testid="stStatusWidget"] {{
+          visibility: hidden;
+          height: 0;
+          min-height: 0;
+          position: fixed;
+        }}
+
+        #MainMenu {{
+          visibility: hidden;
+        }}
+
+        .block-container {{
+          max-width: calc(var(--page-max-width) + 44px);
+          padding-top: {layout["page_top_padding_rem"]}rem;
+          padding-bottom: {layout["page_bottom_padding_rem"]}rem;
+          padding-left: 0.75rem;
+          padding-right: 0.75rem;
           margin-left: auto;
           margin-right: auto;
-        }
+        }}
 
-        .top-shell {
-          width: 100%;
-          max-width: none;
-          padding: 0.48rem 0 0.2rem;
-          margin-top: 0;
-          border-radius: 0;
-          background: transparent;
-          border: none;
-          box-shadow: none;
-          backdrop-filter: blur(16px);
-          position: relative;
-        }
+        p, li, div, span, label {{
+          font-family: var(--body);
+        }}
 
-        .top-shell::before {
-          content: "ANALYSIS WORKBENCH";
-          display: block;
-          margin-bottom: 0.65rem;
+        .atelier-gap {{
+          height: var(--section-gap);
+        }}
+
+        .atelier-header {{
+          padding: 0 0.25rem;
+        }}
+
+        .atelier-eyebrow,
+        .section-kicker,
+        .hero-kicker,
+        .metric-label,
+        .process-meta,
+        .status-pill,
+        .input-ready-badge,
+        .evidence-meta,
+        .prompt-line {{
+          font-family: var(--mono);
+          text-transform: uppercase;
+        }}
+
+        .atelier-eyebrow {{
+          margin: 0 0 0.35rem;
+          color: var(--accent);
+          font-size: 0.7rem;
+          font-weight: 600;
+          letter-spacing: 0.18em;
+        }}
+
+        h1.atelier-title,
+        .atelier-title {{
+          margin: 0;
+          color: var(--ink) !important;
+          font-family: var(--display) !important;
+          font-size: 2.2rem !important;
+          font-weight: 700 !important;
+          line-height: 0.94 !important;
+          letter-spacing: -0.03em !important;
+        }}
+
+        .status-pill {{
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.55rem 0.78rem;
+          border-radius: 12px;
+          background: var(--surface);
+          border: 1px solid var(--line);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+          color: var(--ink-soft);
+          font-size: 0.64rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          justify-content: center;
+          white-space: nowrap;
+        }}
+
+        .status-dot {{
+          width: 0.38rem;
+          height: 0.38rem;
+          border-radius: 999px;
+          background: var(--accent);
+          box-shadow: 0 0 0 4px rgba(74, 159, 216, 0.12);
+          flex: 0 0 auto;
+        }}
+
+        .status-dot.is-error {{
+          background: #d85a5a;
+          box-shadow: 0 0 0 4px rgba(216, 90, 90, 0.14);
+        }}
+
+        .entry-card {{
+          padding: 1.1rem 1.35rem 0.65rem;
+          border-radius: 18px 18px 0 0;
+          background: var(--surface);
+          border: 1px solid var(--line);
+          border-bottom: 0;
+          box-shadow: var(--shadow-lg);
+        }}
+
+        .entry-card .section-kicker,
+        .preview-shell .section-kicker,
+        .process-shell .section-kicker,
+        .judgment-shell .section-kicker,
+        .evidence-shell .section-kicker,
+        .follow-shell .section-kicker {{
+          margin: 0 0 0.42rem;
           color: var(--accent);
           font-size: 0.72rem;
-          font-weight: 800;
-          letter-spacing: 0.28em;
-        }
+          font-weight: 600;
+          letter-spacing: 0.16em;
+        }}
 
-        .shell-title {
+        h2.entry-title,
+        .entry-title {{
           margin: 0;
-          color: var(--text);
-          font-family: var(--font-display);
-          font-size: 3.18rem;
-          font-weight: 700;
-          letter-spacing: -0.03em;
-          line-height: 0.92;
-          max-width: 8ch;
-        }
+          color: var(--ink) !important;
+          font-family: var(--display) !important;
+          font-size: 1.85rem !important;
+          font-weight: 700 !important;
+          line-height: 1.02 !important;
+          letter-spacing: -0.024em !important;
+          max-width: 22ch;
+        }}
 
-        .shell-copy {
-          margin: 0.58rem 0 0;
-          max-width: 35rem;
-          color: var(--text-soft);
-          line-height: 1.7;
-          font-size: 0.94rem;
-        }
+        .input-widget-row {{
+          position: relative;
+        }}
 
-        .header-meta-card {
-          display: inline-flex;
-          flex-direction: column;
-          gap: 0;
-          padding: 0.32rem 0.54rem;
-          border-radius: 999px;
-          width: fit-content;
-          min-width: 0;
-          max-width: none;
-          margin-left: auto;
-          background: linear-gradient(180deg, rgba(255, 251, 245, 0.92) 0%, rgba(246, 236, 216, 0.88) 100%);
-          border: 1px solid rgba(90, 70, 43, 0.12);
-          box-shadow: var(--shadow-sm);
-          backdrop-filter: blur(20px);
-          overflow: hidden;
-        }
+        .input-field-stack {{
+          position: relative;
+        }}
 
-        .header-meta-row {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.1rem;
-          width: auto;
-        }
-
-        .header-meta-title {
+        div[data-testid="stTextInput"] {{
           margin: 0;
-          color: var(--text-soft);
-          font-size: 0.62rem;
-          font-weight: 700;
-          line-height: 1.3;
-          white-space: nowrap;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
+        }}
 
-        .header-status {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 24px;
-          min-width: 24px;
-          padding: 0.04rem;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.72);
-          flex-shrink: 0;
-          border: 1px solid rgba(61, 47, 34, 0.08);
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
-        }
-
-        .header-status.is-error {
-          background: #f8ecec;
-        }
-
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          display: inline-block;
-          border-radius: 999px;
-        }
-
-        .status-dot.is-online {
-          background: #22c55e;
-          box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.14);
-        }
-
-        .status-dot.is-error {
-          background: #ef4444;
-          box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.14);
-        }
-
-        .conversation-panel,
-        .workspace-panel {
-          background: transparent;
-          border: none;
+        div[data-testid="stTextInput"] input {{
+          min-height: 54px;
+          border-radius: 12px;
+          border: 1px solid var(--line);
+          background: var(--surface-subtle);
+          color: var(--ink);
+          font-family: var(--body);
+          font-size: 0.95rem;
+          font-weight: 500;
+          padding-left: 1rem;
+          padding-right: 4.4rem;
           box-shadow: none;
-          border-radius: 0;
-          padding: 0;
-          min-height: 100%;
-        }
+        }}
 
-        .conversation-panel {
-          padding: 0;
-        }
+        div[data-testid="stTextInput"] input::placeholder {{
+          color: var(--ink-muted);
+          font-size: 0.82rem;
+        }}
 
-        .conversation-panel.process-shell {
-          padding: 1.08rem 1.04rem 1.08rem;
-          border-radius: 28px;
-          background:
-            linear-gradient(180deg, rgba(255, 252, 247, 0.84) 0%, rgba(245, 236, 220, 0.72) 100%);
-          border: 1px solid rgba(61, 47, 34, 0.10);
-          box-shadow: var(--shadow-md);
-          backdrop-filter: blur(20px);
+        div[data-testid="stTextInput"] input:focus {{
+          border-color: rgba(74, 159, 216, 0.72);
+          box-shadow: 0 0 0 3px rgba(74, 159, 216, 0.10);
+        }}
+
+        .input-ready-badge {{
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 0.18rem;
+          color: var(--accent);
+          font-size: 0.58rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+        }}
+
+        .stButton {{
+          display: flex;
+          align-items: stretch;
+        }}
+
+        .stButton > button {{
+          width: 100%;
+          min-height: 54px;
+          border-radius: 12px;
+          font-family: var(--body);
+          font-size: 0.88rem;
+          font-weight: 600;
+          border: 1px solid transparent;
+          transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+        }}
+
+        .stButton > button[kind="primary"] {{
+          background: var(--hero);
+          color: var(--hero-ink);
+          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+        }}
+
+        .stButton > button[kind="primary"]:hover {{
+          transform: translateY(-1px);
+          filter: brightness(1.02);
+        }}
+
+        .stButton > button[kind="secondary"] {{
+          background: var(--surface-accent);
+          color: var(--accent);
+          border-color: transparent;
+          box-shadow: none;
+        }}
+
+        .stButton > button[kind="secondary"]:hover {{
+          transform: translateY(-1px);
+          filter: brightness(0.99);
+        }}
+
+        .stElementContainer:has(.entry-card) + [data-testid="stLayoutWrapper"] {{
+          margin-top: -0.28rem;
+          padding: 0 1.35rem 0.1rem;
+          background: var(--surface);
+          border-left: 1px solid var(--line);
+          border-right: 1px solid var(--line);
+        }}
+
+        .stElementContainer:has(.entry-card) + [data-testid="stLayoutWrapper"] > div {{
+          gap: 0.85rem;
+        }}
+
+        .stElementContainer:has(.entry-card) + [data-testid="stLayoutWrapper"] + .stElementContainer:has(.empty-prompts) .stMarkdown {{
+          margin-top: -0.08rem;
+          padding: 0 1.35rem 1rem;
+          background: var(--surface);
+          border: 1px solid var(--line);
+          border-top: 0;
+          border-bottom-left-radius: 18px;
+          border-bottom-right-radius: 18px;
+          box-shadow: var(--shadow-lg);
+        }}
+
+        .empty-prompts {{
+          display: grid;
+          gap: 0.2rem;
+          margin-top: 0;
+        }}
+
+        .prompt-line {{
+          margin: 0;
+          color: #9ca6b3;
+          font-size: 0.56rem;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+        }}
+
+        .preview-shell {{
+          display: grid;
+          gap: 0.7rem;
+        }}
+
+        .preview-hero {{
+          padding: 1.15rem 1.25rem 1.25rem;
+          border-radius: 16px;
+          background: linear-gradient(180deg, #1b222b 0%, #202a35 100%);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        }}
+
+        h3.preview-title,
+        .preview-title,
+        h3.hero-title,
+        .hero-title {{
+          margin: 0;
+          font-family: var(--display) !important;
+          font-weight: 700 !important;
+          line-height: 0.98 !important;
+          letter-spacing: -0.025em !important;
+        }}
+
+        .preview-title {{
+          color: var(--hero-ink) !important;
+          font-size: 2rem !important;
+          max-width: 14ch;
+        }}
+
+        .preview-metrics,
+        .hero-metrics {{
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0.7rem;
+          margin-top: 0.9rem;
+        }}
+
+        .preview-metric,
+        .hero-metric {{
+          padding: 0.82rem 0.92rem;
+          border-radius: 12px;
+          border: 1px solid var(--hero-line);
+          background: var(--hero-elevated);
+        }}
+
+        .preview-metric .metric-label,
+        .hero-metric .metric-label {{
+          margin: 0;
+          color: rgba(245, 247, 250, 0.58);
+          font-size: 0.56rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+        }}
+
+        .preview-metric .metric-value,
+        .hero-metric .metric-value {{
+          margin: 0.24rem 0 0;
+          color: var(--hero-ink);
+          font-size: 0.9rem;
+          font-weight: 600;
+        }}
+
+        .analysis-input-row {{
+          padding-top: 0.15rem;
+        }}
+
+        .analysis-hero {{
           position: relative;
           overflow: hidden;
-        }
+          padding: 1.25rem 1.35rem 1.4rem;
+          border-radius: 20px;
+          background: var(--hero);
+          box-shadow: var(--shadow-xl);
+        }}
 
-        .conversation-panel.process-shell::before,
-        .summary-hero.results-shell::before,
-        .insight-card.insight-shell::before,
-        .plain-section.follow-up-shell::before,
-        .sample-result-card::before {
+        .analysis-hero::before {{
           content: "";
           position: absolute;
           inset: 0;
+          background:
+            linear-gradient(135deg, rgba(255,255,255,0.06), transparent 38%),
+            radial-gradient(circle at 82% 18%, rgba(74, 159, 216, 0.10), transparent 18%);
           pointer-events: none;
-          background:
-            linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 38%),
-            repeating-linear-gradient(
-              90deg,
-              transparent 0 24px,
-              rgba(35, 54, 74, 0.018) 24px 25px
-            );
-        }
+        }}
 
-        .workspace-panel {
-          padding: 0;
-        }
-
-        .content-grid {
-          display: grid;
-          grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.6fr);
-          gap: 1.25rem;
-          align-items: start;
-        }
-
-        .input-caption {
-          margin: 0 0 0.26rem;
-          color: var(--text);
-          font-size: 1.08rem;
-          font-weight: 600;
-          letter-spacing: -0.01em;
-        }
-
-        .panel-kicker,
-        .shell-eyebrow {
-          text-transform: uppercase;
-        }
-
-        .panel-kicker {
-          margin: 0;
-          color: var(--accent);
-          font-size: 0.72rem;
-          font-weight: 600;
-          letter-spacing: 0.06em;
-        }
-
-        .panel-title {
-          margin: 0.35rem 0 0;
-          color: var(--text);
-          font-family: var(--font-display);
-          font-size: 1.55rem;
-          font-weight: 600;
-          letter-spacing: -0.01em;
-        }
-
-        .panel-copy {
-          margin: 0.34rem 0 0;
-          color: var(--text-soft);
-          line-height: 1.7;
-          font-size: 0.9rem;
-        }
-
-        .conversation-panel .panel-title {
-          font-size: 1.38rem;
-        }
-
-        .workspace-panel .panel-title {
-          margin-top: 0.22rem;
-          font-size: var(--workspace-title-size);
-        }
-
-        .waterfall-gap {
-          height: 0.9rem;
-        }
-
-        .content-divider {
-          height: 1px;
-          margin: 1.5rem 0 0;
-          background: linear-gradient(90deg, rgba(17, 24, 39, 0), rgba(17, 24, 39, 0.12), rgba(17, 24, 39, 0));
-        }
-
-        .panel-helper,
-        .input-copy,
-        .input-hint {
-          color: rgba(93, 100, 112, 0.88);
-          font-size: 0.64rem;
-          line-height: 1.45;
-        }
-
-        .microcopy {
-          color: rgba(93, 100, 112, 0.88);
-          font-size: 0.68rem !important;
-          line-height: 1.45;
-        }
-
-        .panel-helper {
-          margin: 0.22rem 0 0;
-          max-width: 30rem;
-        }
-
-        .stream-headline {
-          margin: 0 0 0.35rem;
-          color: var(--accent-secondary);
-          font-size: 0.72rem;
-          font-weight: 800;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-        }
-
-        .header-action-stack {
-          margin-top: 0.04rem;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          gap: 1.42rem;
-        }
-
-        .header-utility-actions {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          gap: 0.28rem;
-          width: 100%;
-        }
-
-        .header-utility-actions .stButton {
-          display: flex;
-          justify-content: flex-end;
-          width: 100%;
-        }
-
-        .conversation-thread {
-          display: grid;
-          gap: 0.78rem;
-          margin-top: 0.56rem;
-          position: relative;
-          padding-left: 0.58rem;
-        }
-
-        .conversation-thread::before {
-          content: "";
-          position: absolute;
-          left: 0;
-          top: 0.1rem;
-          bottom: 0.1rem;
-          width: 2px;
-          border-radius: 999px;
-          background: linear-gradient(180deg, rgba(162, 74, 42, 0.18), rgba(35, 54, 74, 0.12));
-        }
-
-        .thread-item,
-        .empty-card,
-        .metric-card,
-        .insight-card,
-        .follow-card,
-        .section-card {
-          border-radius: 0;
-          border: none;
-          background: transparent;
-          box-shadow: none;
-        }
-
-        .thread-item,
-        .empty-card,
-        .insight-card,
-        .follow-card,
-        .section-card {
-          padding: 0;
-        }
-
-        .thread-item.user {
-          padding: 0.78rem 0.88rem 0.82rem;
-          background: rgba(255, 248, 240, 0.8);
-          border: 1px solid rgba(162, 74, 42, 0.12);
-          border-radius: 20px 20px 8px 20px;
-          margin-left: 0.18rem;
-        }
-
-        .thread-item.assistant {
-          padding: 0.9rem 0.98rem 0.96rem;
-          background: rgba(255, 255, 255, 0.6);
-          border: 1px solid rgba(35, 54, 74, 0.08);
-          border-radius: 20px 20px 20px 8px;
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-          margin-left: 0.64rem;
-        }
-
-        .thread-label,
-        .history-tag,
-        .summary-status {
-          display: inline-flex;
-          align-items: center;
-          min-height: 26px;
-          padding: 0.12rem 0.48rem;
-          border-radius: 999px;
-          background: rgba(35, 54, 74, 0.08);
-          color: #28405c;
-          font-size: 0.66rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          width: fit-content;
-        }
-
-        .thread-item.user .thread-label {
-          background: rgba(162, 74, 42, 0.12);
-          color: var(--accent-ink);
-        }
-
-        .summary-status {
-          background: rgba(255, 248, 236, 0.16);
-          color: rgba(255, 244, 226, 0.86);
-          border: 1px solid rgba(255, 241, 218, 0.14);
-        }
-
-        .thread-content,
-        .thread-content p,
-        .thread-content li {
-          color: var(--text);
-          line-height: 1.76;
-          font-size: 0.88rem;
-        }
-
-        .thread-content p,
-        .thread-content ul {
-          margin: 0.3rem 0 0;
-        }
-
-        .thread-content h2,
-        .thread-content h3 {
-          margin: 0.6rem 0 0.5rem;
-          color: var(--accent-secondary);
-          font-size: 1rem;
-        }
-
-        .thread-content strong,
-        .insight-card strong {
-          color: var(--accent-secondary);
-          font-weight: 800;
-        }
-
-        .thread-content code,
-        .insight-card code {
-          padding: 0.08rem 0.42rem;
-          border-radius: 999px;
-          background: rgba(35, 54, 74, 0.08);
-          color: var(--accent-secondary);
-          font-size: 0.84em;
-        }
-
-        .thread-content table,
-        .insight-card table {
-          width: 100%;
-          margin-top: 0.72rem;
-          border-collapse: collapse;
-          overflow: hidden;
-          border-radius: 16px;
-          background: rgba(255, 252, 247, 0.72);
-          border: 1px solid rgba(61, 47, 34, 0.10);
-        }
-
-        .thread-content th,
-        .thread-content td,
-        .insight-card th,
-        .insight-card td {
-          padding: 0.72rem 0.84rem;
-          text-align: left;
-          border-bottom: 1px solid rgba(61, 47, 34, 0.08);
-          font-size: 0.84rem;
-        }
-
-        .thread-content th,
-        .insight-card th {
-          background: rgba(35, 54, 74, 0.06);
-          color: var(--accent-secondary);
-          font-weight: 700;
-        }
-
-        .example-grid,
-        .follow-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 0.52rem;
-          margin-top: 0.42rem;
-        }
-
-        .example-card,
-        .follow-card {
-          height: 100%;
-        }
-
-        .example-card-title,
-        .follow-card-title {
-          margin: 0;
-          color: var(--text);
-          font-size: 0.94rem;
-          font-weight: 600;
-        }
-
-        .example-card-copy,
-        .follow-card-copy {
-          margin: 0.18rem 0 0;
-          color: var(--text-soft);
-          line-height: 1.55;
-          font-size: 0.78rem !important;
-          font-weight: 400 !important;
-        }
-
-        .summary-hero {
-          padding: 0;
-          border-radius: 0;
-          border: none;
-          background: transparent;
-          box-shadow: none;
-        }
-
-        .summary-hero.results-shell {
-          margin: 0;
-          padding: 1.18rem 1.18rem 1.14rem;
-          border-radius: 32px;
-          background:
-            linear-gradient(135deg, rgba(35, 54, 74, 0.94) 0%, rgba(31, 44, 57, 0.92) 55%, rgba(122, 53, 29, 0.9) 100%);
-          border: 1px solid rgba(255, 241, 218, 0.16);
-          box-shadow: var(--shadow-md);
-          backdrop-filter: blur(22px);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .summary-topline {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1rem;
-          margin-bottom: 0.64rem;
-        }
-
-        .summary-kicker {
-          color: rgba(255, 244, 226, 0.72);
-          font-size: 0.72rem;
-          font-weight: 800;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-        }
-
-        .summary-title {
-          margin: 0;
-          color: #fff8ed;
-          font-family: var(--font-display);
-          font-size: 2rem;
-          font-weight: 700;
-          letter-spacing: -0.02em;
-          line-height: 1.06;
-          max-width: 13ch;
-        }
-
-        .summary-copy {
-          margin: 0.18rem 0 0;
-          color: rgba(255, 242, 224, 0.82);
-          line-height: 1.65;
-          font-size: 0.82rem !important;
-          max-width: 46rem;
-        }
-
-        .metric-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 0.72rem;
-          margin-top: 0.98rem;
-        }
-
-        .metric-card {
-          padding: 0.96rem 0.94rem;
-          background: rgba(255, 248, 236, 0.10);
-          border: 1px solid rgba(255, 242, 224, 0.12);
-          border-radius: 20px;
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-        }
-
-        .metric-label {
-          margin: 0;
-          color: rgba(255, 242, 224, 0.66);
-          font-size: 0.66rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-        }
-
-        .metric-value {
-          margin: 0.18rem 0 0;
-          color: #fff8ed;
-          font-size: 1.14rem;
-          font-weight: 700;
-        }
-
-        .section-heading {
-          margin: 0 0 0.32rem;
-          color: var(--accent-secondary);
-          font-size: 0.78rem;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 0.14em;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.44rem;
-        }
-
-        .section-heading::before {
-          content: "";
-          display: inline-block;
-          width: 1.3rem;
-          height: 1px;
-          background: linear-gradient(90deg, var(--accent), rgba(162, 74, 42, 0.12));
-        }
-
-        .section-card {
-          margin: 0;
-        }
-
-        .section-card > .section-heading {
-          margin-bottom: 0.32rem;
-        }
-
-        .chart-section {
-          margin: 0;
-        }
-
-        .table-section {
-          margin: -0.92rem 0 0;
-        }
-
-        .workspace-gap {
-          height: var(--workspace-stack-gap);
-        }
-
-        .analytics-gap {
-          height: 0;
-        }
-
-        .insight-card h1,
-        .insight-card h2,
-        .insight-card h3,
-        .insight-card p,
-        .insight-card li {
-          color: var(--text);
-        }
-
-        .insight-card.insight-shell {
-          padding: 1.08rem 1.12rem 1.14rem;
-          border-radius: 30px;
-          background: linear-gradient(180deg, rgba(255, 252, 247, 0.86) 0%, rgba(247, 239, 225, 0.76) 100%);
-          border: 1px solid rgba(61, 47, 34, 0.10);
-          box-shadow: var(--shadow-md);
-          backdrop-filter: blur(22px);
-          margin: 0;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .insight-card h2,
-        .insight-card h3 {
-          margin: 0.08rem 0 0.42rem;
-          font-size: 1.56rem;
-          font-weight: 700;
-          line-height: 1.35;
-          font-family: var(--font-display);
-        }
-
-        .insight-card p,
-        .insight-card ul {
-          margin: 0.28rem 0 0;
-          line-height: 1.75;
-        }
-
-        .insight-card ul,
-        .thread-content ul {
-          padding-left: 1.05rem;
-        }
-
-        .empty-copy {
-          margin: 0.35rem 0 0;
-          color: var(--text-soft);
-          line-height: 1.7;
-          font-size: 0.78rem;
-        }
-
-        .preview-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 0.55rem;
-          margin-top: 0.85rem;
-        }
-
-        .preview-item {
+        .hero-top {{
           display: flex;
           align-items: flex-start;
-          gap: 0.45rem;
-          color: var(--text-soft);
-          font-size: 0.72rem;
-          line-height: 1.55;
-        }
-
-        .preview-dot {
-          width: 6px;
-          height: 6px;
-          margin-top: 0.4rem;
-          border-radius: 999px;
-          background: rgba(40, 64, 92, 0.45);
-          flex: 0 0 auto;
-        }
-
-        .preview-title {
-          color: #28405c;
-          font-weight: 700;
-        }
-
-        .input-headline {
-          margin: 0;
-          color: var(--text-soft);
-          font-size: 0.72rem;
-          font-weight: 500;
-        }
-
-        div[data-testid="stForm"] {
-          margin-top: 0.82rem !important;
-          padding: 2.14rem 2.06rem 2rem !important;
-          background:
-            radial-gradient(circle at top left, rgba(162, 74, 42, 0.10), transparent 24%),
-            radial-gradient(circle at right 18%, rgba(35, 54, 74, 0.08), transparent 22%),
-            linear-gradient(180deg, rgba(255, 252, 247, 0.88) 0%, rgba(244, 234, 218, 0.82) 100%);
-          border: 1px solid rgba(90, 70, 43, 0.12);
-          box-shadow: var(--shadow-lg);
-          border-radius: 30px !important;
-          backdrop-filter: blur(24px);
-        }
-
-        div[data-testid="stForm"] > div:first-child {
-          border: none !important;
-          padding: 0 !important;
-          background: transparent !important;
-        }
-
-        div[data-testid="stForm"] div[data-testid="column"] {
+          justify-content: space-between;
+          gap: 1.25rem;
           position: relative;
-        }
+          z-index: 1;
+        }}
 
-        div[data-testid="stFormSubmitButton"] {
-          position: relative;
-          z-index: 5;
-        }
+        .hero-copy-block {{
+          max-width: 33rem;
+        }}
 
-        .input-shell {
-          margin: 0;
-        }
-
-        .input-caption {
-          margin: 0 0 0.36rem;
-          color: var(--text);
-          font-size: 1.22rem;
-          font-weight: 700;
-          letter-spacing: -0.01em;
-          line-height: 1.3;
-        }
-
-        .input-copy {
-          margin: 0 0 0.9rem;
-          color: var(--text-soft);
-          font-size: 0.74rem;
-          line-height: 1.65;
-          max-width: 34rem;
-        }
-
-        .input-shell div[data-testid="stTextInput"] input {
-          min-height: 78px;
-          border-radius: 24px;
-          border: 1px solid rgba(61, 47, 34, 0.10);
-          background: rgba(255, 251, 245, 0.88);
-          color: var(--text);
-          box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.75),
-            0 8px 18px rgba(74, 44, 24, 0.05);
-          font-size: 1.08rem;
-          padding-left: 1.05rem;
-          transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-        }
-
-        .input-shell div[data-testid="stTextInput"] input:focus {
-          border-color: rgba(162, 74, 42, 0.45);
-          box-shadow:
-            0 0 0 4px rgba(162, 74, 42, 0.10),
-            0 14px 28px rgba(74, 44, 24, 0.08);
-          transform: translateY(-1px);
-        }
-
-        .input-shell div[data-testid="stTextInput"] input::placeholder {
-          color: #8a7d69;
-          font-size: 0.78rem;
-        }
-
-        .input-shell .stButton > button,
-        .input-shell button[kind="primaryFormSubmit"] {
-          min-height: 78px;
-          border-radius: 24px;
-          border: 1px solid rgba(122, 53, 29, 0.24);
-          background: linear-gradient(180deg, #b65431 0%, #8c3b22 100%);
-          color: #ffffff;
-          font-weight: 700;
-          font-size: 1rem;
-          letter-spacing: 0.02em;
-          box-shadow: 0 18px 32px rgba(162, 74, 42, 0.24);
-          transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
-        }
-
-        .input-shell .stButton > button:hover,
-        .input-shell button[kind="primaryFormSubmit"]:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 24px 40px rgba(162, 74, 42, 0.28);
-          filter: saturate(1.02);
-        }
-
-        .input-shell .stButton > button:active,
-        .input-shell button[kind="primaryFormSubmit"]:active {
-          transform: translateY(0);
-        }
-
-        .secondary-action .stButton > button {
-          min-height: 34px;
-          min-width: 124px;
-          padding: 0.28rem 0.72rem;
-          border-radius: 999px;
-          border: 1px solid var(--line);
-          background: rgba(255, 250, 242, 0.88);
-          color: var(--text);
-          font-size: 0.74rem;
-          font-weight: 700;
-          box-shadow: none;
-          white-space: nowrap;
-          transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
-        }
-
-        .secondary-action .stButton > button:hover {
-          border-color: rgba(162, 74, 42, 0.22);
-          background: rgba(255, 247, 236, 0.96);
-          transform: translateY(-1px);
-        }
-
-        .secondary-action.preview-action .stButton > button {
-          min-height: 28px;
-          min-width: auto;
-          padding: 0.12rem 0.42rem;
-          border-radius: 999px;
-          border-color: rgba(15, 23, 42, 0.04);
-          background: rgba(255, 255, 255, 0.18);
-          color: rgba(93, 100, 112, 0.78);
-          font-size: 0.62rem;
-          font-weight: 500;
-        }
-
-        .secondary-action.preview-action .stButton > button:hover {
-          background: rgba(255, 250, 242, 0.92);
-          color: var(--accent-ink);
-        }
-
-        .secondary-action.reset-action .stButton > button {
-          min-width: 128px;
-        }
-
-        .sample-result-card {
-          margin-top: 0.85rem;
-          padding: 1.28rem 1.28rem;
-          border-radius: 28px;
-          background: linear-gradient(180deg, rgba(255, 252, 247, 0.86) 0%, rgba(246, 237, 222, 0.78) 100%);
-          border: 1px solid rgba(61, 47, 34, 0.10);
-          box-shadow: var(--shadow-md);
-          backdrop-filter: blur(22px);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .sample-result-row {
-          display: grid;
-          grid-template-columns: 88px 1fr;
-          gap: 0.8rem;
-          padding: 0.68rem 0;
-          border-top: 1px solid rgba(17, 24, 39, 0.08);
-        }
-
-        .sample-result-row:first-of-type {
-          border-top: none;
-        }
-
-        .sample-label {
+        .hero-kicker {{
+          margin: 0 0 0.45rem;
           color: var(--accent);
-          font-size: 0.8rem;
+          font-size: 0.68rem;
           font-weight: 600;
-        }
+          letter-spacing: 0.16em;
+        }}
 
-        .sample-value {
-          color: var(--text);
-          font-size: 0.86rem;
-          line-height: 1.7;
-        }
+        .analysis-hero h3.hero-title,
+        .hero-title {{
+          color: var(--hero-ink) !important;
+          font-size: 2.55rem !important;
+          max-width: 12ch;
+        }}
 
-        .sample-result-row.emphasis .sample-value {
-          font-size: 0.98rem;
-          font-weight: 600;
+        .hero-copy {{
+          margin: 0.55rem 0 0;
+          color: rgba(245, 247, 250, 0.84) !important;
+          font-size: 0.92rem;
           line-height: 1.55;
-        }
+          max-width: 36rem;
+        }}
 
-        .sample-result-row.highlight {
-          margin-top: 0.2rem;
-          padding: 0.8rem 0.82rem;
-          border-radius: 16px;
-          background: rgba(162, 74, 42, 0.08);
-          border-top: none;
-        }
-
-        .plain-section {
-          margin: 0;
-        }
-
-        .plain-section.suggested-questions {
-          margin: 0.15rem 0 0.95rem;
-          padding: 1.02rem 1.08rem 1.08rem;
-          border-radius: 28px;
-          background: rgba(255, 252, 247, 0.62);
-          border: 1px solid rgba(61, 47, 34, 0.08);
-          box-shadow: var(--shadow-md);
-          backdrop-filter: blur(22px);
-        }
-
-        .plain-section.suggested-questions .section-heading {
-          margin-bottom: 0.3rem;
-          font-size: 0.98rem;
-        }
-
-        .plain-section.follow-up-shell {
-          margin: 0;
-          padding: 1rem 1.08rem 1.08rem;
-          border-radius: 28px;
-          background: linear-gradient(180deg, rgba(255, 252, 247, 0.84) 0%, rgba(246, 237, 222, 0.76) 100%);
-          border: 1px solid rgba(61, 47, 34, 0.10);
-          box-shadow: var(--shadow-md);
-          backdrop-filter: blur(22px);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .plain-list {
+        .hero-side {{
           display: grid;
-          gap: 0.56rem;
-          margin-top: 0.34rem;
-        }
+          justify-items: end;
+          gap: 0.3rem;
+          min-width: 5rem;
+        }}
 
-        .plain-list-item {
-          padding: 0.18rem 0 0.18rem 1.15rem;
+        .hero-plus {{
+          color: var(--accent);
+          font-family: var(--mono);
+          font-size: 0.82rem;
+          font-weight: 600;
+          line-height: 1;
+        }}
+
+        .hero-side-note {{
+          color: rgba(245, 247, 250, 0.36);
+          font-family: var(--mono);
+          font-size: 0.58rem;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }}
+
+        .process-shell,
+        .judgment-shell,
+        .evidence-shell,
+        .follow-shell {{
           position: relative;
-        }
+        }}
 
-        .plain-list-item + .plain-list-item {
-          border-top: 1px dashed rgba(61, 47, 34, 0.08);
-          padding-top: 0.7rem;
-          margin-top: 0.08rem;
-        }
+        .process-list {{
+          display: grid;
+          gap: 0.72rem;
+          margin-top: 0.1rem;
+        }}
 
-        .plain-list-item::before {
-          content: "";
-          position: absolute;
-          left: 0;
-          top: 0.62rem;
-          width: 6px;
-          height: 6px;
+        .process-item {{
+          padding: 0.82rem 1.1rem;
+          border-left: 2px solid var(--line);
+        }}
+
+        .process-meta {{
+          margin: 0;
+          color: var(--ink-muted);
+          font-size: 0.58rem;
+          font-weight: 600;
+          letter-spacing: 0.16em;
+        }}
+
+        .process-body {{
+          margin: 0.34rem 0 0;
+          color: var(--ink);
+          font-family: var(--display);
+          line-height: 1.12;
+          letter-spacing: -0.015em;
+        }}
+
+        .process-body.primary {{
+          font-size: 1.55rem;
+          font-weight: 700;
+        }}
+
+        .process-body.secondary {{
+          font-size: 1.2rem;
+          font-weight: 600;
+        }}
+
+        h2.judgment-title,
+        .judgment-title {{
+          margin: 0.05rem 0 0.6rem;
+          color: var(--ink) !important;
+          font-family: var(--display) !important;
+          font-size: 2.05rem !important;
+          font-weight: 700 !important;
+          line-height: 1.02 !important;
+          letter-spacing: -0.025em !important;
+          max-width: 17ch;
+        }}
+
+        .judgment-copy,
+        .judgment-copy p,
+        .judgment-copy li {{
+          color: var(--ink-soft);
+          font-size: 1rem;
+          line-height: 1.7;
+        }}
+
+        .judgment-copy p {{
+          margin: 0.4rem 0 0;
+        }}
+
+        .judgment-copy ul,
+        .judgment-copy ol {{
+          padding-left: 1.05rem;
+          margin: 0.45rem 0 0;
+        }}
+
+        .evidence-card {{
+          padding-top: 0.15rem;
+        }}
+
+        .evidence-title {{
+          margin: 0 0 0.6rem;
+          color: var(--ink);
+          font-family: var(--display);
+          font-size: 1.65rem;
+          font-weight: 700;
+          line-height: 1.08;
+        }}
+
+        .evidence-rule {{
+          width: 100%;
+          height: 2px;
+          margin-top: 0.65rem;
+          background: rgba(74, 159, 216, 0.3);
           border-radius: 999px;
-          background: rgba(162, 74, 42, 0.56);
-        }
+        }}
 
-        .table-shell {
-          padding: 0.5rem;
-          border-radius: var(--radius-lg);
-          overflow: hidden;
-          background: linear-gradient(180deg, rgba(255, 252, 247, 0.9) 0%, rgba(248, 240, 228, 0.86) 100%);
+        .evidence-meta-row {{
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-top: 0.6rem;
+        }}
+
+        .evidence-meta {{
+          margin: 0;
+          color: var(--ink-muted);
+          font-size: 0.62rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+        }}
+
+        .evidence-note {{
+          margin: 0.5rem 0 0;
+          color: var(--ink-soft);
+          font-family: var(--mono);
+          font-size: 0.66rem;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+        }}
+
+        div[data-testid="stPlotlyChart"] {{
+          margin: 0 !important;
+          padding: 0.9rem 0.95rem;
+          border-radius: 10px;
+          background: var(--surface-subtle);
           border: 1px solid var(--line);
-          box-shadow: var(--shadow-sm);
-          backdrop-filter: blur(18px);
-        }
+          box-shadow: none;
+        }}
 
-        .table-scroll {
+        div[data-testid="stPlotlyChart"] > div {{
+          border-radius: 8px;
+          overflow: hidden;
+        }}
+
+        .table-shell {{
+          border-radius: 10px;
+          overflow: hidden;
+          background: var(--surface-subtle);
+          border: 1px solid var(--line);
+        }}
+
+        .table-scroll {{
           overflow-x: auto;
-          overflow-y: auto;
-          max-height: 31rem;
-          border-radius: 16px;
-        }
+        }}
 
-        .data-table {
+        .data-table {{
           width: 100%;
           border-collapse: collapse;
-          font-family: var(--font-body);
-          background: rgba(255, 252, 247, 0.92);
-        }
+          font-family: var(--body);
+          background: var(--surface-subtle);
+        }}
 
-        .data-table thead th {
-          padding: 0.82rem 0.88rem;
+        .data-table thead th {{
+          padding: 0.82rem 0.92rem;
           text-align: left;
-          background: rgba(35, 54, 74, 0.06);
-          color: var(--accent-secondary);
-          font-size: 0.92rem;
-          font-weight: 700;
-          border-bottom: 1px solid rgba(61, 47, 34, 0.10);
+          background: #f2f5f8;
+          color: var(--ink-soft);
+          font-family: var(--mono);
+          font-size: 0.64rem;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          border-bottom: 1px solid var(--line);
           white-space: nowrap;
-        }
+        }}
 
-        .data-table tbody td {
-          padding: 0.84rem 0.88rem;
-          color: var(--text);
-          font-size: 0.88rem;
-          border-bottom: 1px solid rgba(61, 47, 34, 0.08);
-          vertical-align: top;
-        }
+        .data-table tbody td {{
+          padding: 0.88rem 0.92rem;
+          color: var(--ink);
+          font-size: 0.84rem;
+          border-bottom: 1px solid #e6edf3;
+        }}
 
-        .data-table tbody tr:nth-child(even) td {
-          background: rgba(255, 250, 242, 0.72);
-        }
-
-        .data-table tbody tr:last-child td {
+        .data-table tbody tr:last-child td {{
           border-bottom: none;
-        }
+        }}
 
-        div[data-testid="stDataFrame"],
-        div[data-testid="stPlotlyChart"] {
-          border-radius: var(--radius-lg);
-          padding: 0.5rem;
-          margin-top: 0;
-          margin-bottom: 0;
-          overflow: hidden;
-          background: linear-gradient(180deg, rgba(255, 252, 247, 0.9) 0%, rgba(248, 240, 228, 0.86) 100%);
-          border: 1px solid var(--line);
-          box-shadow: var(--shadow-sm);
-          backdrop-filter: blur(18px);
-        }
+        .follow-list {{
+          display: grid;
+          margin-top: 0.12rem;
+        }}
 
-        div[data-testid="stPlotlyChart"] > div {
-          border-radius: 16px;
-          overflow: hidden;
-        }
+        .follow-item {{
+          padding: 0.82rem 0;
+          border-bottom: 1px solid var(--line);
+        }}
 
-        div[data-testid="stDataFrame"] [data-testid="stTable"] {
-          border-radius: 16px;
-          overflow: hidden;
-        }
+        .follow-item:last-child {{
+          border-bottom: none;
+        }}
 
-        div[data-testid="stDataFrame"] table {
-          font-family: var(--font-body);
-        }
+        .follow-question {{
+          margin: 0;
+          color: var(--ink);
+          font-family: var(--display);
+          font-size: 1.18rem;
+          font-weight: 600;
+          line-height: 1.15;
+        }}
 
-        div[data-testid="stDataFrame"] thead tr th {
-          background: rgba(35, 54, 74, 0.06);
-          color: var(--accent-secondary);
-          font-weight: 700;
-          border-bottom: 1px solid rgba(61, 47, 34, 0.10);
-        }
-
-        div[data-testid="stDataFrame"] tbody tr:nth-child(even) td {
-          background: rgba(255, 248, 239, 0.48);
-        }
-
-        @media (max-width: 1200px) {
-          .metric-grid,
-          .example-grid,
-          .follow-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
-        }
-
-        @media (max-width: 880px) {
-          .block-container {
-            padding-top: 1rem;
+        @media (max-width: 900px) {{
+          .block-container {{
             padding-left: 0.9rem;
             padding-right: 0.9rem;
-          }
+          }}
 
-          .content-grid {
-            grid-template-columns: 1fr;
-          }
+          .atelier-title {{
+            font-size: 2.45rem;
+          }}
 
-          .metric-grid,
-          .example-grid,
-          .follow-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .shell-title {
-            font-size: 2.2rem;
+          .entry-title,
+          .hero-title,
+          .preview-title,
+          .judgment-title {{
             max-width: none;
-          }
+          }}
 
-          .shell-copy {
-            max-width: none;
-          }
-
-          .thread-item.user,
-          .thread-item.assistant,
-          .summary-hero.results-shell,
-          .insight-card.insight-shell,
-          .plain-section.follow-up-shell,
-          .sample-result-card,
-          div[data-testid="stForm"] {
-            border-radius: 22px !important;
-          }
-
-          .input-caption {
-            font-size: 0.98rem;
-          }
-
-          .top-shell,
-          .header-meta-card {
-            max-width: none;
-          }
-
-          .metric-grid {
+          .hero-top,
+          .evidence-meta-row,
+          .preview-metrics,
+          .hero-metrics {{
             grid-template-columns: 1fr;
-          }
-        }
+            display: grid;
+          }}
+
+          .hero-side {{
+            justify-items: start;
+          }}
+        }}
         </style>
         """
-    replacements = {
-        "__WORKSPACE_TITLE_SIZE__": str(layout["workspace_title_size_rem"]),
-        "__SUMMARY_TITLE_SIZE__": str(layout["summary_title_size_rem"]),
-        "__SUMMARY_COPY_SIZE__": str(layout["summary_copy_size_rem"]),
-        "__SUMMARY_HERO_PADDING__": str(layout["summary_hero_padding_rem"]),
-        "__METRIC_CARD_PADDING_Y__": str(layout["metric_card_padding_y_rem"]),
-        "__METRIC_CARD_PADDING_X__": str(layout["metric_card_padding_x_rem"]),
-        "__METRIC_VALUE_SIZE__": str(layout["metric_value_size_rem"]),
-    }
-    for token, value in replacements.items():
-        css = css.replace(token, value)
     st.markdown(
         css,
         unsafe_allow_html=True,
@@ -1181,24 +722,26 @@ def load_schema() -> tuple[str | None, str | None]:
 
 
 def build_layout_config() -> dict:
-    """集中维护首页关键布局占比，便于定向收口页面主次。"""
+    """集中维护新版页面的尺寸与节奏。"""
     return {
-        "header_columns": [0.78, 0.22],
+        "header_columns": [0.74, 0.26],
         "header_gap": "small",
-        "header_action_offset_rem": 0.04,
-        "content_columns": [0.39, 0.61],
+        "header_action_offset_rem": 0.0,
+        "content_columns": [1.0],
         "content_mode": "waterfall",
-        "content_max_width_px": 1080,
-        "content_section_gap_rem": 0.14,
-        "workspace_density": "compact",
-        "workspace_title_size_rem": 1.22,
-        "summary_title_size_rem": 0.94,
-        "summary_copy_size_rem": 0.76,
-        "summary_hero_padding_rem": 0.62,
-        "metric_card_padding_y_rem": 0.46,
-        "metric_card_padding_x_rem": 0.54,
-        "metric_value_size_rem": 0.82,
-        "input_columns": [0.78, 0.22],
+        "content_max_width_px": 820,
+        "content_section_gap_rem": 1.6,
+        "workspace_density": "editorial",
+        "workspace_title_size_rem": 1.65,
+        "summary_title_size_rem": 2.2,
+        "summary_copy_size_rem": 0.92,
+        "summary_hero_padding_rem": 1.25,
+        "metric_card_padding_y_rem": 0.82,
+        "metric_card_padding_x_rem": 0.92,
+        "metric_value_size_rem": 0.9,
+        "input_columns": [0.64, 0.22, 0.14],
+        "page_top_padding_rem": 1.35,
+        "page_bottom_padding_rem": 4.2,
     }
 
 
@@ -1230,40 +773,46 @@ def build_result_panel(answer: str, chart_config: dict | None, raw_rows: list[di
 
 
 def build_example_questions() -> list[dict]:
-    """提供首页空状态和推荐追问共用的示例问题。"""
+    """提供分析态页尾的追问建议。"""
     return [
-        {"title": "看增长质量", "question": "哪些城市在增长，哪些城市在明显下滑？"},
-        {"title": "看优先级", "question": "Top10 城市里，谁的增长质量最好，谁最值得优先跟进？"},
-        {"title": "看异常结构", "question": "哪些城市结构异常，值得重点分析？"},
+        {"title": "Which of the weak cities also show the sharpest order decline by district or time band?", "question": ""},
+        {"title": "Compared with the previous quarter, which cities changed because of volume and which because of price?", "question": ""},
+        {"title": "If we only focus on the system underperforming cities, where should the investigation start next?", "question": ""},
+    ]
+
+
+def build_empty_prompt_lines() -> list[str]:
+    """提供空状态输入板下方的三条轻量提示。"""
+    return [
+        "1. Top 10 declining cities",
+        "2. Order vs price mix",
+        "3. Quarterly anomaly scan",
     ]
 
 
 def build_quick_preview_payload() -> dict:
     """构造一份固定样例，调 UI 时直接进入结果页。"""
     raw_rows = [
-        {"城市": "中山市", "订单量": 23822, "收入（元）": 4125800},
-        {"城市": "深圳市", "订单量": 18302, "收入（元）": 3654200},
-        {"城市": "珠海市", "订单量": 15123, "收入（元）": 2943600},
-        {"城市": "佛山市", "订单量": 13518, "收入（元）": 2521700},
-        {"城市": "广州市", "订单量": 8356, "收入（元）": 1793400},
+        {"City": "Zhongshan", "Revenue Drop": "-16.4%", "Orders": 23822},
+        {"City": "Shenzhen", "Revenue Drop": "-12.7%", "Orders": 18302},
+        {"City": "Zhuhai", "Revenue Drop": "-8.5%", "Orders": 15123},
+        {"City": "Foshan", "Revenue Drop": "-6.2%", "Orders": 13518},
     ]
-    answer = """## 核心判断
+    answer = """## Core judgment
 
-广东 2023 年 12 月充电订单主要集中在珠三角城市，其中中山市、深圳市、珠海市位于第一梯队。
+Most underperforming cities are being dragged by order loss, not pricing.
 
-- **中山市**订单量最高，说明当前覆盖密度和活跃度都更强。
-- **深圳市**和**珠海市**紧随其后，属于值得继续拆分站点结构和时段分布的重点城市。
-- 如果下一步要做经营跟进，建议先比较 Top3 城市的单站产出和复购表现。"""
+The result flow isolates the cities with the sharpest revenue decline, then compares order volume and pricing movement to see which driver dominates. That changes the follow-up: the next move is not a pricing review first, but a deeper look into demand, activity, and location-level order concentration in the worst-performing cities."""
     chart_config = {
         "type": "bar",
-        "x": "城市",
-        "y": ["订单量"],
-        "title": "广东 2023 年 12 月充电订单 Top5 城市",
+        "x": "City",
+        "y": ["Orders"],
+        "title": "Quarterly revenue decline by city cluster",
     }
     assistant_text = build_assistant_message(answer, raw_rows)
     return {
         "messages": [
-            {"role": "user", "content": "广东23年12月充电订单Top10城市"},
+            {"role": "user", "content": "Which cities lost the most revenue momentum over the last quarter?"},
             {"role": "assistant", "content": assistant_text},
         ],
         "latest_result": {
@@ -1283,11 +832,11 @@ def activate_quick_preview() -> None:
 
 
 def build_workspace_preview_items() -> list[dict]:
-    """提供空状态下右侧结果区的展示预期。"""
+    """提供空状态下深色预期板的指标。"""
     return [
-        {"title": "核心判断", "copy": "直接回答问题里最值得先做的业务判断。"},
-        {"title": "关键数据", "copy": "把最能支撑判断的数据和差异先摆出来。"},
-        {"title": "推荐追问", "copy": "顺手给出下一步最值得继续拆的问题。"},
+        {"label": "Judgment", "value": "One clear answer"},
+        {"label": "Visuals", "value": "Chart + table"},
+        {"label": "Follow-up", "value": "Next questions"},
     ]
 
 
@@ -1335,27 +884,53 @@ def build_thread_preview(role: str, content: str) -> str:
 
 
 def build_header_model(db_error: str | None, latest_result: dict | None) -> dict:
-    """构造顶部头部需要的业务状态。"""
-    if db_error:
-        return {
-            "title": PAGE_TITLE,
-            "subtitle": "输入业务问题，直接获得核心判断、关键数据和推荐追问。",
-            "status_label": "数据源状态",
-            "status_tone": "is-error",
-            "status_value": "未在线",
-            "status_dot_class": "is-error",
-            "status_detail": "",
-        }
-
+    """构造顶部题签与状态胶囊。"""
     return {
         "title": PAGE_TITLE,
-        "subtitle": "输入业务问题，直接获得核心判断、关键数据和推荐追问。",
-        "status_label": "数据源状态",
-        "status_tone": "",
-        "status_value": "在线",
-        "status_dot_class": "is-online",
-        "status_detail": "",
+        "eyebrow": "+ ANALYSIS ATELIER",
+        "status_text": "DATA SOURCE OFFLINE" if db_error else "DATA SOURCE ONLINE",
+        "status_dot_class": "is-error" if db_error else "is-online",
     }
+
+
+def summarize_answer_for_ui(answer: str) -> tuple[str, str]:
+    """把 markdown 结果压成适合 Hero 与正文区的短标题和摘要。"""
+    if not answer:
+        return (
+            "A centered result board appears first, before the detail trail begins.",
+            "The first view prioritizes a single judgment, then reveals the evidence modules in the same reading path.",
+        )
+
+    text = re.sub(r"```.*?```", "", answer, flags=re.S)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
+    lines: list[str] = []
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        line = re.sub(r"^#+\s*", "", line)
+        line = re.sub(r"^[-*]\s*", "", line)
+        line = re.sub(r"^\d+\.\s*", "", line)
+        if line:
+            lines.append(line)
+
+    if not lines:
+        return (
+            "A centered result board appears first, before the detail trail begins.",
+            "The first view prioritizes a single judgment, then reveals the evidence modules in the same reading path.",
+        )
+
+    title = lines[1] if len(lines) > 1 and lines[0].lower() in {"core judgment", "核心判断"} else lines[0]
+    summary_candidates = [
+        line for line in lines if line != title and line.lower() not in {"core judgment", "核心判断"}
+    ]
+    summary = summary_candidates[0] if summary_candidates else "The result flow keeps the judgment short first, then opens the detailed evidence below."
+    if len(title) > 88:
+        title = title[:85].rstrip() + "..."
+    if len(summary) > 180:
+        summary = summary[:177].rstrip() + "..."
+    return title, summary
 
 
 def _extract_question_pairs(messages: list[dict]) -> list[dict]:
@@ -1385,141 +960,118 @@ def _extract_question_pairs(messages: list[dict]) -> list[dict]:
 
 
 def build_conversation_panel(messages: list[dict], latest_result: dict | None) -> dict:
-    """把消息流整理成首页左侧的分析协作线程。"""
-    items: list[dict] = []
-    for message in messages:
-        role = message.get("role")
-        content = str(message.get("content", "")).strip()
-        if role not in {"user", "assistant"} or not content:
-            continue
-        items.append(
-            {
-                "role": role,
-                "label": "你" if role == "user" else "分析助手",
-                "content": build_thread_preview(role, content),
-            }
-        )
+    """把消息流压成分析态里的三段式 process thread。"""
+    if not latest_result:
+        return {"items": []}
 
-    has_items = bool(items)
-    if not has_items:
-        return {
-            "title": "",
-            "helper_text": "",
-            "examples_title": "",
-            "examples": [],
-            "items": [],
-            "status_label": "等待提问",
-        }
+    latest_question = ""
+    for message in reversed(messages):
+        if message.get("role") == "user" and str(message.get("content", "")).strip():
+            latest_question = str(message.get("content", "")).strip()
+            break
 
-    return {
-        "title": "分析过程",
-        "helper_text": "",
-        "examples_title": "建议先问",
-        "examples": build_example_questions(),
-        "items": items,
-        "status_label": "已生成结果" if latest_result else "等待提问",
-    }
+    answer = str((latest_result or {}).get("answer", "")).strip()
+    raw_rows = (latest_result or {}).get("raw_rows", []) or []
+    has_visual = bool((latest_result or {}).get("chart_config") and raw_rows)
+
+    items = [
+        {
+            "meta": "QUESTION 01 · USER",
+            "content": latest_question or "Which cities lost the most revenue momentum over the last quarter?",
+            "tone": "primary",
+        },
+        {
+            "meta": "STEP 02 · ASSISTANT",
+            "content": "The result flow isolates the cities with the sharpest revenue decline, then compares order volume and pricing movement to see which driver dominates."
+            if answer
+            else "The result board is prepared first, then the detail trail arranges the evidence in the same reading path.",
+            "tone": "secondary",
+        },
+        {
+            "meta": "STEP 03 · EVIDENCE",
+            "content": f"{len(raw_rows)} row{'s' if len(raw_rows) != 1 else ''} are ready for comparison, and the current view {'includes a chart and a table' if has_visual else 'starts from the structured table first'}."
+            if raw_rows
+            else "Evidence will appear below the result board as soon as the first query returns rows.",
+            "tone": "secondary",
+        },
+    ]
+    return {"items": items}
 
 
 def build_workspace_sections(latest_result: dict | None) -> dict:
-    """根据最新结果决定工作区各区块是否展示。"""
+    """根据最新结果构造分析态页面所需的区块数据。"""
     result = latest_result or {}
     answer = result.get("answer", "")
     chart_config = result.get("chart_config")
     raw_rows = result.get("raw_rows", [])
-    panel = build_result_panel(answer, chart_config, raw_rows)
-    mode = panel["mode"]
-    examples = build_example_questions()
-    preview_items = build_workspace_preview_items()
-    mode_label = "" if mode != "empty" else "示例预览"
+    if not latest_result:
+        return {
+            "mode": "empty",
+            "summary": {"metric_items": []},
+            "preview_items": build_workspace_preview_items(),
+            "follow_ups": [],
+        }
 
-    if mode == "analysis":
-        description = f"当前已经整理出核心判断，并保留了 {len(raw_rows)} 行支撑数据。"
-        follow_ups = [
-            {"title": "继续拆维度", "question": "把当前判断按城市、月份或渠道再拆开看。"},
-            {"title": "补一个对比", "question": "和上月或去年同期相比，差异主要来自哪里？"},
-            {"title": "确认优先级", "question": "如果只看影响最大的三个城市，问题最严重的是谁？"},
-        ]
-    elif mode == "table":
-        description = f"当前拿到了 {len(raw_rows)} 行关键数据，可以继续追问原因、对比和异常点。"
-        follow_ups = [
-            {"title": "找异常城市", "question": "哪些城市的指标变化最异常，值得重点关注？"},
-            {"title": "看增长质量", "question": "这些城市里，谁的增长质量最好，谁只是短期波动？"},
-            {"title": "补充筛选", "question": "把时间范围缩小到最近一个季度，再看结果是否还成立。"},
-        ]
-    else:
-        description = ""
-        follow_ups = []
+    hero_title, hero_copy = summarize_answer_for_ui(str(answer or ""))
+    chart_count = 1 if chart_config and raw_rows else 0
+    follow_ups = build_example_questions()
 
-    analysis_type = "复杂链路" if answer else "简单链路"
-    chart_count = 1 if panel["has_chart"] else 0
-
-    summary = {
-        "mode_label": mode_label,
-        "title": "结果判断",
-        "summary": "这里优先汇总本轮路由走向、返回数据规模，以及最终生成了多少张图表，方便先判断结果是不是走对了。",
-        "description": description,
-        "row_count": panel["row_count"],
-        "chart_label": "已生成" if panel["has_chart"] else "待生成",
-        "metric_items": [
-            {"label": "分析类型", "value": analysis_type},
-            {"label": "数据行数", "value": f"{panel['row_count']} 行"},
-            {"label": "图表数", "value": f"{chart_count} 张"},
-        ],
-    }
-
-    workspace = {
-        "mode": mode,
-        "summary": summary,
-        "insight_title": "核心判断",
-        "chart_title": "关键图表",
-        "table_title": "关键数据",
-        "follow_up_title": "推荐追问",
+    return {
+        "mode": "analysis",
+        "summary": {
+            "kicker": "+ RESULT PATTERN",
+            "title": hero_title,
+            "summary": hero_copy,
+            "metric_items": [
+                {"label": "Mode", "value": "Multi-step" if answer and raw_rows else "Direct"},
+                {"label": "Rows", "value": str(len(raw_rows))},
+                {"label": "Visuals", "value": f"{chart_count} chart" if chart_count else "Table only"},
+            ],
+        },
+        "insight_title": "Most underperforming cities are being dragged by order loss, not pricing.",
+        "chart_title": chart_config.get("title") if chart_config else "Quarterly revenue decline by city cluster",
+        "table_title": "City-level revenue drop snapshot",
+        "follow_up_title": "+ NEXT QUESTIONS",
         "sections": {
             "show_insight": bool(answer),
             "show_chart": bool(chart_config and raw_rows),
             "show_table": bool(raw_rows),
         },
         "follow_ups": follow_ups,
-        "examples": examples,
-        "preview_items": preview_items,
+        "preview_items": build_workspace_preview_items(),
+        "chart_note": "Key markets" if raw_rows else "",
+        "table_note": f"{min(len(raw_rows), 3)} cities account for most of the contraction." if raw_rows else "",
     }
-
-    if mode == "empty":
-        workspace["empty_hint"] = ""
-        workspace["summary"]["metric_items"] = []
-
-    return workspace
 
 
 def build_input_model(db_error: str | None, latest_result: dict | None) -> dict:
-    """构造底部统一输入条的文案。"""
+    """构造空状态与分析态共用的输入区文案。"""
     result = latest_result or {}
     has_result = bool(result.get("answer") or result.get("raw_rows"))
 
     if db_error:
         return {
-            "title": "数据库暂时不可用",
-            "copy": "数据库恢复之前，这里不会真正发起分析请求。",
+            "entry_kicker": "+ BEGIN WITH ONE QUESTION",
+            "entry_title": "Start from a business judgment, not from a dashboard.",
             "placeholder": "请先修复数据库连接后再提问",
-            "button_label": "数据库不可用",
-            "hint": "当前无法发起分析，请先恢复数据库连接。",
+            "button_label": "Generate",
+            "preview_label": "Preview",
+            "state_badge": "OFFLINE",
             "disabled": True,
-            "status_label": "数据库异常",
+            "prompt_lines": build_empty_prompt_lines(),
         }
 
     return {
-        "title": "从一个业务判断开始" if not has_result else "继续补充这轮判断",
-        "copy": ""
+        "entry_kicker": "+ BEGIN WITH ONE QUESTION",
+        "entry_title": "Start from a business judgment, not from a dashboard.",
+        "placeholder": "Why are some cities losing revenue momentum?"
         if not has_result
-        else "",
-        "placeholder": "输入一个业务问题，例如：为什么某些城市收入下滑？"
-        if not has_result
-        else "例如：这些下滑城市中，哪些是订单量下降导致的？",
-        "button_label": "继续生成结论" if has_result else "生成分析结论",
-        "hint": "",
+        else "Which of the weak cities also show the sharpest order decline?",
+        "button_label": "Generate",
+        "preview_label": "Preview",
+        "state_badge": "READY",
         "disabled": False,
-        "status_label": "数据库在线",
+        "prompt_lines": build_empty_prompt_lines(),
     }
 
 
@@ -1636,16 +1188,26 @@ def _render_simple_markdown_html(text: str) -> str:
 
 
 def build_chart_layout() -> dict:
-    """统一图表的紧凑布局，避免图表和下方模块之间出现过大空白。"""
+    """统一图表外观，使其贴合新版证据区风格。"""
     return dict(
         paper_bgcolor="rgba(255,255,255,0)",
-        plot_bgcolor="rgba(255,248,239,0.78)",
-        font=dict(color="#2b3440", family="Avenir Next, Segoe UI, PingFang SC, sans-serif"),
-        title=dict(font=dict(size=18, color="#23364a", family="Baskerville, Iowan Old Style, Songti SC, serif")),
-        margin=dict(l=20, r=20, t=46, b=8),
-        xaxis=dict(gridcolor="rgba(35,54,74,0.08)", zeroline=False, linecolor="rgba(61,47,34,0.10)"),
-        yaxis=dict(gridcolor="rgba(35,54,74,0.08)", zeroline=False, linecolor="rgba(61,47,34,0.10)"),
-        height=360,
+        plot_bgcolor="#F7F9FB",
+        font=dict(color="#171C22", family="Funnel Sans, Avenir Next, Segoe UI, PingFang SC, sans-serif"),
+        margin=dict(l=12, r=12, t=10, b=28),
+        xaxis=dict(
+            gridcolor="rgba(0,0,0,0)",
+            zeroline=False,
+            linecolor="rgba(0,0,0,0)",
+            tickfont=dict(size=10, color="#7A8591"),
+        ),
+        yaxis=dict(
+            gridcolor="rgba(217,225,232,0.65)",
+            zeroline=False,
+            linecolor="rgba(0,0,0,0)",
+            tickfont=dict(size=10, color="#7A8591"),
+        ),
+        height=240,
+        showlegend=False,
     )
 
 
@@ -1658,39 +1220,37 @@ def render_chart(chart_config: dict, raw_rows: list[dict]) -> None:
     chart_type = chart_config.get("type")
     x_col = chart_config.get("x")
     y_cols = [col for col in chart_config.get("y", []) if col in df.columns]
-    title = chart_config.get("title", "")
-
     if x_col not in df.columns or not y_cols:
         return
 
     common_layout = build_chart_layout()
+    bar_colors = ["#11161D", "#24313D", "#4A9FD8", "#9BC4E3", "#C9DCEC"]
 
     if chart_type == "line":
         fig = px.line(
             df,
             x=x_col,
             y=y_cols,
-            title=title,
             markers=True,
-            color_discrete_sequence=["#23364a", "#a24a2a", "#c18a3d"],
+            color_discrete_sequence=["#4A9FD8", "#11161D", "#7A8591"],
         )
         fig.update_traces(line=dict(width=3), marker=dict(size=8))
         fig.update_layout(**common_layout)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False, "responsive": True})
     elif chart_type == "bar":
+        limited_df = df.head(5)
         fig = px.bar(
-            df,
+            limited_df,
             x=x_col,
             y=y_cols[0],
-            title=title,
-            color_discrete_sequence=["#a24a2a"],
         )
+        fig.update_traces(marker_color=bar_colors[: len(limited_df)], marker_line_width=0)
         fig.update_layout(**common_layout)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
 
 def render_header(db_error: str | None, latest_result: dict | None) -> None:
-    """渲染顶部平台头部。"""
+    """渲染顶部题签与状态。"""
     model = build_header_model(db_error, latest_result)
     layout = build_layout_config()
     info_col, action_col = st.columns(layout["header_columns"], gap=layout["header_gap"])
@@ -1698,9 +1258,9 @@ def render_header(db_error: str | None, latest_result: dict | None) -> None:
     with info_col:
         st.markdown(
             f"""
-            <div class="top-shell">
-              <h1 class="shell-title">{html.escape(model["title"])}</h1>
-              <p class="shell-copy">{html.escape(model["subtitle"])}</p>
+            <div class="atelier-header">
+              <p class="atelier-eyebrow">{html.escape(model["eyebrow"])}</p>
+              <h1 class="atelier-title">{html.escape(model["title"])}</h1>
             </div>
             """,
             unsafe_allow_html=True,
@@ -1708,31 +1268,20 @@ def render_header(db_error: str | None, latest_result: dict | None) -> None:
 
     with action_col:
         st.markdown(
-            f'<div class="header-action-stack" style="margin-top:{layout["header_action_offset_rem"]}rem;">',
+            f'<div style="margin-top:{layout["header_action_offset_rem"]}rem;">',
             unsafe_allow_html=True,
         )
-        control_spacer, control_col = st.columns([0.32, 0.68], gap="small")
+        control_spacer, control_col = st.columns([0.36, 0.64], gap="small")
         with control_col:
             st.markdown(
                 f"""
-                <div class="header-meta-card">
-                  <div class="header-meta-row">
-                    <p class="header-meta-title">{html.escape(model["status_label"])}</p>
-                    <div class="header-status {html.escape(model['status_tone'])}">
-                      <span class="status-dot {html.escape(model['status_dot_class'])}"></span>
-                    </div>
-                  </div>
+                <div class="status-pill">
+                  <span class="status-dot {html.escape(model['status_dot_class'])}"></span>
+                  <span>{html.escape(model["status_text"])}</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
-        st.markdown('<div style="height:1.18rem;"></div>', unsafe_allow_html=True)
-        button_spacer, button_col = st.columns([0.32, 0.68], gap="small")
-        with button_col:
-            if st.button("清空会话", key="header_reset", type="secondary", use_container_width=False, width="content"):
-                st.session_state.messages = []
-                st.session_state.latest_result = None
-                st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
 
@@ -1762,52 +1311,57 @@ def _render_example_cards(examples: list[dict], title: str, compact: bool = Fals
 
 
 def _build_conversation_thread_html(items: list[dict]) -> str:
-    """把协作线程拼成一整块 HTML，避免 Streamlit 拆分渲染后留下空框。"""
+    """把 process thread 拼成一整块 HTML。"""
     thread_items = "".join(
-        f'<div class="thread-item {html.escape(item["role"])}">'
-        f'<div class="thread-label">{html.escape(item["label"])}</div>'
-        f'<div class="thread-content">{_render_simple_markdown_html(item["content"])}</div>'
+        f'<div class="process-item">'
+        f'<p class="process-meta">{html.escape(item["meta"])}</p>'
+        f'<p class="process-body {html.escape(item["tone"])}">{html.escape(item["content"])}</p>'
         "</div>"
         for item in items
     )
     return (
-        '<p class="stream-headline">分析过程</p>'
-        f'<div class="conversation-panel process-shell"><div class="conversation-thread">{thread_items}</div></div>'
+        '<div class="process-shell">'
+        '<p class="section-kicker">+ PROCESS THREAD</p>'
+        f'<div class="process-list">{thread_items}</div>'
+        "</div>"
     )
 
 
 def render_conversation_panel(messages: list[dict], latest_result: dict | None) -> None:
-    """渲染左侧分析协作线程。"""
+    """渲染分析态中的 process thread。"""
     panel = build_conversation_panel(messages, latest_result)
     if not panel["items"]:
         return
-    if panel["helper_text"]:
-        st.markdown(f'<p class="microcopy" style="margin:0 0 0.45rem;">{html.escape(panel["helper_text"])}</p>', unsafe_allow_html=True)
     st.markdown(_build_conversation_thread_html(panel["items"]), unsafe_allow_html=True)
 
 
 def _render_summary_hero(summary: dict) -> None:
-    """渲染结果摘要头图。"""
+    """渲染分析态 Hero。"""
     metric_cards = "".join(
         f"""
-        <div class="metric-card">
+        <div class="hero-metric">
           <p class="metric-label">{html.escape(item["label"])}</p>
           <p class="metric-value">{html.escape(item["value"])}</p>
         </div>
         """
         for item in summary["metric_items"]
     )
+    hero_marks = "".join('<span class="hero-plus">+</span>' for _ in range(4))
     st.markdown(
         f"""
-        <div class="summary-hero results-shell">
-          <div class="summary-topline">
-            <div class="summary-kicker">Result Board</div>
-            {'<div class="summary-status">' + html.escape(summary["mode_label"]) + '</div>' if summary["mode_label"] else ''}
+        <div class="analysis-hero">
+          <div class="hero-top">
+            <div class="hero-copy-block">
+              <p class="hero-kicker">{html.escape(summary["kicker"])}</p>
+              <h3 class="hero-title">{html.escape(summary["title"])}</h3>
+              <p class="hero-copy">{html.escape(summary["summary"])}</p>
+            </div>
+            <div class="hero-side">
+              {hero_marks}
+              <span class="hero-side-note">detail trail ready</span>
+            </div>
           </div>
-          <h3 class="summary-title">{html.escape(summary["title"])}</h3>
-          <p class="summary-copy">{html.escape(summary["summary"])}</p>
-          {'<p class="summary-copy">' + html.escape(summary["description"]) + '</p>' if summary["description"] else ''}
-          {'<div class="metric-grid">' + metric_cards + '</div>' if summary["metric_items"] else ''}
+          {'<div class="hero-metrics">' + metric_cards + '</div>' if summary["metric_items"] else ''}
         </div>
         """,
         unsafe_allow_html=True,
@@ -1815,21 +1369,20 @@ def _render_summary_hero(summary: dict) -> None:
 
 
 def _render_follow_up_cards(follow_ups: list[dict], title: str) -> None:
-    """渲染轻量推荐追问。"""
+    """渲染页尾 Next Questions。"""
     items = "".join(
         f"""
-        <div class="plain-list-item">
-          <p class="follow-card-title">{html.escape(item["title"])}</p>
-          <p class="follow-card-copy">{html.escape(item["question"])}</p>
+        <div class="follow-item">
+          <p class="follow-question">{html.escape(item["title"])}</p>
         </div>
         """
         for item in follow_ups
     )
     st.markdown(
         f"""
-        <div class="plain-section follow-up-shell">
-          <p class="section-heading">{html.escape(title)}</p>
-          <div class="plain-list">{items}</div>
+        <div class="follow-shell">
+          <p class="section-kicker">{html.escape(title)}</p>
+          <div class="follow-list">{items}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1837,7 +1390,7 @@ def _render_follow_up_cards(follow_ups: list[dict], title: str) -> None:
 
 
 def _render_data_table_shell(raw_rows: list[dict], title: str) -> None:
-    """用 HTML 表格渲染关键数据，并把标题与表格合成一个整体块。"""
+    """用 HTML 表格渲染 Evidence Table。"""
     if not raw_rows:
         return
 
@@ -1854,14 +1407,22 @@ def _render_data_table_shell(raw_rows: list[dict], title: str) -> None:
     )
     st.markdown(
         f"""
-        <div class="section-card table-section">
-          <p class="section-heading">{html.escape(title)}</p>
-          <div class="table-shell">
+        <div class="evidence-shell">
+          <p class="section-kicker">+ EVIDENCE TABLE</p>
+          <div class="evidence-card">
+            <h3 class="evidence-title">{html.escape(title)}</h3>
+            <div class="table-shell">
             <div class="table-scroll">
               <table class="data-table">
                 <thead><tr>{header_html}</tr></thead>
                 <tbody>{body_html}</tbody>
               </table>
+            </div>
+            </div>
+            <div class="evidence-rule"></div>
+            <div class="evidence-meta-row">
+              <p class="evidence-meta">Rows {len(raw_rows)}</p>
+              <p class="evidence-meta">Snapshot table</p>
             </div>
           </div>
         </div>
@@ -1871,23 +1432,25 @@ def _render_data_table_shell(raw_rows: list[dict], title: str) -> None:
 
 
 def _render_workspace_preview(previews: list[dict]) -> None:
-    """渲染空状态下的结果区占位说明。"""
+    """渲染空状态下的结果预期板。"""
     cards = "".join(
         f"""
-        <div class="preview-item">
-          <span class="preview-dot"></span>
-          <div>
-            <span class="preview-title">{html.escape(item["title"])}</span>
-            <span>：{html.escape(item["copy"])}</span>
-          </div>
+        <div class="preview-metric">
+          <p class="metric-label">{html.escape(item["label"])}</p>
+          <p class="metric-value">{html.escape(item["value"])}</p>
         </div>
         """
         for item in previews
     )
     st.markdown(
         f"""
-        <div style="margin-top:0.55rem;">
-          <div class="preview-grid">{cards}</div>
+        <div class="preview-shell">
+          <p class="section-kicker">+ WHAT ARRIVES AFTER YOU ASK</p>
+          <div class="preview-hero">
+            <p class="section-kicker">+ RESULT PREVIEW</p>
+            <h3 class="preview-title">A centered result board appears first, before the detail trail begins.</h3>
+            <div class="preview-metrics">{cards}</div>
+          </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1895,133 +1458,156 @@ def _render_workspace_preview(previews: list[dict]) -> None:
 
 
 def _render_sample_result_card() -> None:
-    """渲染空状态下的示例结果卡片，帮助用户预期输出质量。"""
-    st.markdown(
-        """
-        <div class="section-card sample-result-card">
-          <p class="section-heading">示例结果</p>
-          <div class="sample-result-row emphasis">
-            <span class="sample-label">核心判断</span>
-            <span class="sample-value">某些城市收入下降，主要由订单量减少导致。</span>
-          </div>
-          <div class="sample-result-row">
-            <span class="sample-label">关键数据</span>
-            <span class="sample-value">A 城市 -15%<br>B 城市 -22%<br>两地活跃用户同步下滑。</span>
-          </div>
-          <div class="sample-result-row highlight">
-            <span class="sample-label">推荐追问</span>
-            <span class="sample-value">这些城市的用户活跃度变化如何？是否集中在某些区域或时段？</span>
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """空状态不再使用旧的示例结果卡。"""
+    return None
 
 
 def render_workspace(latest_result: dict | None) -> None:
-    """渲染右侧结果工作区。"""
+    """渲染分析态主瀑布内容。"""
     result = latest_result or {}
     answer = result.get("answer", "")
     chart_config = result.get("chart_config")
     raw_rows = result.get("raw_rows", [])
     workspace = build_workspace_sections(latest_result)
-    mode = workspace["mode"]
     sections = workspace["sections"]
 
-    if mode == "empty":
+    if workspace["mode"] == "empty":
         return
-    else:
-        def render_workspace_gap() -> None:
-            """在右侧模块之间插入统一间距，避免依赖 Streamlit 内部 DOM。"""
-            st.markdown('<div class="workspace-gap"></div>', unsafe_allow_html=True)
 
-        def render_analytics_gap() -> None:
-            """单独收紧图表和表格之间的距离，不影响其它模块节奏。"""
-            st.markdown('<div class="analytics-gap"></div>', unsafe_allow_html=True)
+    _render_summary_hero(workspace["summary"])
+    st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
+    render_conversation_panel(st.session_state.messages, latest_result)
 
-        _render_summary_hero(workspace["summary"])
-        has_section_before = True
-
-        if sections["show_insight"] and answer:
-            if has_section_before:
-                render_workspace_gap()
-            st.markdown(
-                f"""
-                <div class="insight-card insight-shell">
-                  {_render_simple_markdown_html(answer)}
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            has_section_before = True
-
-        if (sections["show_chart"] and chart_config and raw_rows) or (sections["show_table"] and raw_rows):
-            if has_section_before:
-                render_workspace_gap()
-            analytics_block = st.container()
-            with analytics_block:
-                if sections["show_chart"] and chart_config and raw_rows:
-                    st.markdown(
-                        f"""
-                        <div class="section-card chart-section">
-                          <p class="section-heading">{html.escape(workspace["chart_title"])}</p>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
-                    render_chart(chart_config, raw_rows)
-
-                if sections["show_table"] and raw_rows:
-                    if sections["show_chart"] and chart_config and raw_rows:
-                        render_analytics_gap()
-                    _render_data_table_shell(raw_rows, workspace["table_title"])
-            has_section_before = True
-
-        if workspace["follow_ups"]:
-            if has_section_before:
-                render_workspace_gap()
-            _render_follow_up_cards(workspace["follow_ups"], workspace["follow_up_title"])
-
-
-def render_input_bar(schema: str | None, db_error: str | None, latest_result: dict | None) -> None:
-    """渲染底部统一输入条。"""
-    model = build_input_model(db_error, latest_result)
-    layout = build_layout_config()
-    if not latest_result and not db_error:
-        _render_example_cards(build_example_questions(), "建议先问", compact=True, tone="suggested-questions")
-    with st.form("analysis_input_bar", clear_on_submit=True):
+    if sections["show_insight"] and answer:
+        insight_title, _ = summarize_answer_for_ui(answer)
+        st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
         st.markdown(
             f"""
-            <div class="input-shell">
-              <p class="input-caption">{html.escape(model["title"])}</p>
-              {'<p class="input-copy">' + html.escape(model["copy"]) + '</p>' if model["copy"] else ''}
+            <div class="judgment-shell">
+              <p class="section-kicker">+ CORE JUDGMENT</p>
+              <h2 class="judgment-title">{html.escape(insight_title)}</h2>
+              <div class="judgment-copy">{_render_simple_markdown_html(answer)}</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
-        input_col, button_col = st.columns(layout["input_columns"], gap="medium", vertical_alignment="bottom")
-        with input_col:
-            question = st.text_input(
-                "业务问题",
-                value="",
-                placeholder=model["placeholder"],
-                label_visibility="collapsed",
-                disabled=bool(model["disabled"]),
-            )
-        with button_col:
-            submitted = st.form_submit_button(
-                model["button_label"],
-                use_container_width=True,
-                disabled=bool(model["disabled"]),
-            )
 
-    preview_spacer, preview_col = st.columns([0.86, 0.14], gap="small")
-    with preview_col:
-        if st.button("快速预览", key="input_preview", type="tertiary", use_container_width=False):
-            activate_quick_preview()
+    if sections["show_chart"] and chart_config and raw_rows:
+        st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="evidence-shell">
+              <p class="section-kicker">+ EVIDENCE VISUAL</p>
+              <div class="evidence-card">
+                <h3 class="evidence-title">{html.escape(workspace["chart_title"])}</h3>
+            """,
+            unsafe_allow_html=True,
+        )
+        render_chart(chart_config, raw_rows)
+        st.markdown(
+            f"""
+                <div class="evidence-rule"></div>
+                <div class="evidence-meta-row">
+                  <p class="evidence-meta">Visual cluster</p>
+                  <p class="evidence-meta">Rows {len(raw_rows)}</p>
+                </div>
+              </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    if submitted:
+    if sections["show_table"] and raw_rows:
+        st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
+        _render_data_table_shell(raw_rows, workspace["table_title"])
+        if workspace["table_note"]:
+            st.markdown(f'<p class="evidence-note">{html.escape(workspace["table_note"])}</p>', unsafe_allow_html=True)
+
+    if workspace["follow_ups"]:
+        st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
+        _render_follow_up_cards(workspace["follow_ups"], workspace["follow_up_title"])
+
+
+def render_input_bar(schema: str | None, db_error: str | None, latest_result: dict | None) -> None:
+    """按当前状态渲染输入托盘。"""
+    if st.session_state.get("pending_clear_analysis_question"):
+        st.session_state.analysis_question = ""
+        st.session_state.pending_clear_analysis_question = False
+
+    model = build_input_model(db_error, latest_result)
+    layout = build_layout_config()
+
+    if latest_result:
+        st.markdown('<div class="analysis-input-row">', unsafe_allow_html=True)
+    else:
+        st.markdown(
+            f"""
+            <div class="entry-card">
+              <p class="section-kicker">{html.escape(model["entry_kicker"])}</p>
+              <h2 class="entry-title">{html.escape(model["entry_title"])}</h2>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    input_cols = st.columns(layout["input_columns"], gap="small", vertical_alignment="center")
+
+    with input_cols[0]:
+        st.markdown('<div class="input-field-stack">', unsafe_allow_html=True)
+        question = st.text_input(
+            "Business question",
+            key="analysis_question",
+            placeholder=model["placeholder"],
+            label_visibility="collapsed",
+            disabled=bool(model["disabled"]),
+        )
+        st.markdown(f'<div class="input-ready-badge">{html.escape(model["state_badge"])}</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with input_cols[1]:
+        generate_clicked = st.button(
+            model["button_label"],
+            key="input_generate",
+            type="primary",
+            use_container_width=True,
+            disabled=bool(model["disabled"]),
+        )
+
+    with input_cols[2]:
+        preview_clicked = st.button(
+            model["preview_label"],
+            key="input_preview",
+            type="secondary",
+            use_container_width=True,
+        )
+
+    if latest_result:
+        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        prompt_lines = "".join(
+            f'<p class="prompt-line">{html.escape(line)}</p>' for line in model["prompt_lines"]
+        )
+        st.markdown(f'<div class="empty-prompts">{prompt_lines}</div></div>', unsafe_allow_html=True)
+
+    if preview_clicked:
+        activate_quick_preview()
+        return
+
+    if generate_clicked:
         handle_question(schema, db_error, question.strip())
+
+
+def render_empty_state_page(schema: str | None, db_error: str | None) -> None:
+    """渲染空状态整页。"""
+    render_input_bar(schema, db_error, latest_result=None)
+    st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
+    _render_workspace_preview(build_workspace_preview_items())
+
+
+def render_analysis_state_page(schema: str | None, db_error: str | None, latest_result: dict) -> None:
+    """渲染分析态整页。"""
+    render_input_bar(schema, db_error, latest_result)
+    st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
+    render_workspace(latest_result)
 
 
 def init_state() -> None:
@@ -2030,6 +1616,10 @@ def init_state() -> None:
         st.session_state.messages = []
     if "latest_result" not in st.session_state:
         st.session_state.latest_result = None
+    if "analysis_question" not in st.session_state:
+        st.session_state.analysis_question = ""
+    if "pending_clear_analysis_question" not in st.session_state:
+        st.session_state.pending_clear_analysis_question = False
 
 
 def handle_question(schema: str | None, db_error: str | None, question: str | None) -> None:
@@ -2059,11 +1649,12 @@ def handle_question(schema: str | None, db_error: str | None, question: str | No
         "chart_config": chart_config,
         "raw_rows": raw_rows,
     }
+    st.session_state.pending_clear_analysis_question = True
     st.rerun()
 
 
 def render_app() -> None:
-    """渲染双区 Copilot 首页。"""
+    """渲染与 .pen 一致的两状态分析页面。"""
     st.set_page_config(page_title=PAGE_TITLE, page_icon="📊", layout="wide")
     layout = build_layout_config()
     inject_styles(layout)
@@ -2073,17 +1664,12 @@ def render_app() -> None:
     latest_result = st.session_state.latest_result
 
     render_header(db_error, latest_result)
-    st.markdown(f'<div class="waterfall-gap" style="height:{layout["content_section_gap_rem"]}rem;"></div>', unsafe_allow_html=True)
-    render_input_bar(schema, db_error, latest_result)
+    st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
+
     if latest_result:
-        st.markdown(f'<div class="waterfall-gap" style="height:{layout["content_section_gap_rem"] + 0.2}rem;"></div>', unsafe_allow_html=True)
-        left_col, right_col = st.columns(layout["content_columns"], gap="medium")
-        with left_col:
-            render_conversation_panel(st.session_state.messages, latest_result)
-        with right_col:
-            render_workspace(latest_result)
+        render_analysis_state_page(schema, db_error, latest_result)
     else:
-        st.markdown(f'<div class="waterfall-gap" style="height:{layout["content_section_gap_rem"]}rem;"></div>', unsafe_allow_html=True)
+        render_empty_state_page(schema, db_error)
 
 
 if __name__ == "__main__":
