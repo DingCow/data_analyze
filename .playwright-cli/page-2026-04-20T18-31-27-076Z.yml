@@ -1,0 +1,32 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - paragraph [ref=e6]: + 分析工作台
+          - heading "数据分析助手" [level=1] [ref=e7]
+          - paragraph [ref=e8]: 从一个业务问题开始，快速得到结论、证据和下一步追问。
+        - generic [ref=e11]: 数据源在线
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: 就绪
+          - textbox "分析问题" [ref=e17]:
+            - /placeholder: 从一个业务判断开始：例如上个季度哪些城市的收入动能下滑最明显？
+        - button "开始分析" [ref=e18] [cursor=pointer]
+        - button "查看示例" [ref=e19] [cursor=pointer]
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - paragraph [ref=e22]: + 结果预期
+          - heading "先从业务判断出发，再把结论、证据和追问排成一条阅读链路。" [level=2] [ref=e23]
+          - paragraph [ref=e24]: 输入一个你真正关心的问题，页面会把分析过程整理成更容易阅读和继续追问的工作台。
+        - generic [ref=e25]:
+          - article [ref=e26]:
+            - generic [ref=e27]: 判断
+            - strong [ref=e28]: 一个明确结论
+          - article [ref=e29]:
+            - generic [ref=e30]: 证据
+            - strong [ref=e31]: 图表 + 表格
+          - article [ref=e32]:
+            - generic [ref=e33]: 追问
+            - strong [ref=e34]: 下一步问题
+  - alert [ref=e35]

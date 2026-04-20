@@ -1,0 +1,156 @@
+- generic:
+  - generic [ref=e3]:
+    - banner
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - generic [ref=e15]:
+          - paragraph [ref=e16]: + 分析工作台
+          - heading "数据分析助手" [level=1] [ref=e18]:
+            - text: 数据分析助手
+            - generic [ref=e19]:
+              - link "Link to heading":
+                - /url: "#867c03e2"
+                - img
+        - generic [ref=e34]: 数据源在线
+      - generic [ref=e59]:
+        - generic [ref=e61]:
+          - textbox "Business question" [ref=e66]:
+            - /placeholder: 哪些表现较弱的城市，同时也出现了最明显的订单下滑？
+          - generic [ref=e70]:
+            - generic: 就绪
+        - generic [ref=e74]:
+          - button "开始分析" [ref=e79] [cursor=pointer]:
+            - paragraph [ref=e83]: 开始分析
+          - button "查看示例" [active] [ref=e88] [cursor=pointer]:
+            - paragraph [ref=e92]: 查看示例
+      - generic [ref=e102]:
+        - generic [ref=e110]:
+          - paragraph [ref=e120]: + 结果概览
+          - heading "表现较弱的城市，主要是被订单流失拖累，而不是价格变化。" [level=3] [ref=e122]:
+            - text: 表现较弱的城市，主要是被订单流失拖累，而不是价格变化。
+            - link "Link to heading" [ref=e124] [cursor=pointer]:
+              - /url: "#ebecf0d3"
+              - img [ref=e125]
+          - paragraph [ref=e127]: 结果页会先找出收入下滑最明显的城市，再比较订单量与价格变化，判断主要驱动因素。这会直接影响下一步动作：与其先做价格复盘，不如先深入看需求、活跃度，以及差城市在区域层面的订单集中度。
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - paragraph [ref=e130]: 模式
+            - paragraph [ref=e131]: 多步分析
+          - generic [ref=e132]:
+            - paragraph [ref=e133]: 行数
+            - paragraph [ref=e134]: "4"
+          - generic [ref=e135]:
+            - paragraph [ref=e136]: 图形
+            - paragraph [ref=e137]: 1 张图
+      - generic [ref=e144]:
+        - generic [ref=e151]:
+          - paragraph [ref=e152]: + 分析过程
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - paragraph [ref=e155]: 问题 01 · 用户
+              - paragraph [ref=e156]: 上个季度哪些城市的收入动能下滑最明显？
+            - generic [ref=e157]:
+              - paragraph [ref=e158]: 步骤 02 · 助手
+              - paragraph [ref=e159]: 结果页会先找出收入下滑最明显的城市，再比较订单量与价格变化，判断真正的主导因素。
+            - generic [ref=e160]:
+              - paragraph [ref=e161]: 步骤 03 · 证据
+              - paragraph [ref=e162]: 当前已准备好 4 行数据供对比，页面会同时给出图表和表格。
+        - generic [ref=e169]:
+          - paragraph [ref=e170]: + 核心判断
+          - heading "表现较弱的城市，主要是被订单流失拖累，而不是价格变化。" [level=2] [ref=e172]:
+            - text: 表现较弱的城市，主要是被订单流失拖累，而不是价格变化。
+            - generic [ref=e173]:
+              - link "Link to heading":
+                - /url: "#ebecf0d3"
+                - img
+          - paragraph [ref=e175]: 结果页会先找出收入下滑最明显的城市，再比较订单量与价格变化，判断主要驱动因素。这会直接影响下一步动作：与其先做价格复盘，不如先深入看需求、活跃度，以及差城市在区域层面的订单集中度。
+      - generic [ref=e182]:
+        - generic [ref=e186]:
+          - generic [ref=e191]:
+            - paragraph [ref=e192]: + 证据图表
+            - heading "城市群季度收入下滑对比" [level=3] [ref=e194]:
+              - text: 城市群季度收入下滑对比
+              - generic [ref=e195]:
+                - link "Link to heading":
+                  - /url: "#3c96b30a"
+                  - img
+          - generic [ref=e201]:
+            - img:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: 中山
+                    - generic:
+                      - generic: 深圳
+                    - generic:
+                      - generic: 珠海
+                    - generic:
+                      - generic: 佛山
+                  - generic:
+                    - generic:
+                      - generic: "0"
+                    - generic:
+                      - generic: 5k
+                    - generic:
+                      - generic: 10k
+                    - generic:
+                      - generic: 15k
+                    - generic:
+                      - generic: 20k
+                    - generic:
+                      - generic: 25k
+            - img:
+              - generic:
+                - generic:
+                  - generic: 城市
+                - generic:
+                  - generic: 订单量
+            - img
+          - generic [ref=e221]:
+            - paragraph [ref=e222]: 图形视图
+            - paragraph [ref=e223]: 行数 4
+        - generic [ref=e225]:
+          - generic [ref=e230]:
+            - paragraph [ref=e231]: + 证据表格
+            - generic [ref=e232]:
+              - heading "城市收入下滑快照" [level=3] [ref=e234]:
+                - text: 城市收入下滑快照
+                - generic [ref=e235]:
+                  - link "Link to heading":
+                    - /url: "#70918939"
+                    - img
+              - table [ref=e238]:
+                - rowgroup [ref=e239]:
+                  - row "城市 收入下滑 订单量" [ref=e240]:
+                    - columnheader "城市" [ref=e241]
+                    - columnheader "收入下滑" [ref=e242]
+                    - columnheader "订单量" [ref=e243]
+                - rowgroup [ref=e244]:
+                  - row "中山 -16.4% 23822" [ref=e245]:
+                    - cell "中山" [ref=e246]
+                    - cell "-16.4%" [ref=e247]
+                    - cell "23822" [ref=e248]
+                  - row "深圳 -12.7% 18302" [ref=e249]:
+                    - cell "深圳" [ref=e250]
+                    - cell "-12.7%" [ref=e251]
+                    - cell "18302" [ref=e252]
+                  - row "珠海 -8.5% 15123" [ref=e253]:
+                    - cell "珠海" [ref=e254]
+                    - cell "-8.5%" [ref=e255]
+                    - cell "15123" [ref=e256]
+                  - row "佛山 -6.2% 13518" [ref=e257]:
+                    - cell "佛山" [ref=e258]
+                    - cell "-6.2%" [ref=e259]
+                    - cell "13518" [ref=e260]
+              - generic [ref=e262]:
+                - paragraph [ref=e263]: 行数 4
+                - paragraph [ref=e264]: 快照表
+          - paragraph [ref=e269]: 前 3 个城市贡献了大部分下滑。
+      - generic [ref=e279]:
+        - paragraph [ref=e280]: + 下一步问题
+        - generic [ref=e281]:
+          - paragraph [ref=e283]: 哪些表现较弱的城市，在区县或时段维度上也出现了最明显的订单下滑？
+          - paragraph [ref=e285]: 和上一季度相比，哪些城市的变化主要来自销量，哪些主要来自价格？
+          - paragraph [ref=e287]: 如果只聚焦表现最差的几个城市，下一步应该先从哪里开始排查？
+  - img [ref=e288]

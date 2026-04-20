@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-新能源充电桩与停车场数据分析 Agent，支持自然语言提问，自动路由到 SQL 查询或深度分析链路，同时提供 CLI 和 Web 两种交互方式。
+新能源充电桩与停车场数据分析 Agent，支持自然语言提问，自动路由到 SQL 查询或深度分析链路，同时提供 CLI 和独立 Web 工作台两种交互方式。
 
 ---
 
@@ -13,13 +13,17 @@ data_analyze/
 ├── .env                  # DEEPSEEK_API_KEY（不得硬编码）
 ├── AGENTS.md             # 项目协作规则与输出约束
 ├── main.py               # CLI 主入口，多轮对话循环，调用 router.run()
-├── app.py                # Streamlit Web UI，支持图表渲染（Plotly）
-├── run.sh                # 常用启动脚本
+├── app.py                # 旧版 Streamlit Web UI（legacy）
+├── run.sh                # 一键启动 FastAPI + Next.js
+├── requirements.txt      # Python 运行依赖（含 API 与 legacy UI）
 ├── docs/                 # 项目文档、状态记录、操作说明
-├── skills/               # 项目级协作 skill
+├── web/                  # Next.js App Router + TypeScript 前端
 ├── src/
 │   ├── db.py             # SQLite 工具层：连接、schema 提取、SQL 执行（只读，最多500行）
 │   ├── llm.py            # 公共基础层：DeepSeek 客户端、TOOLS 定义、工具执行（含原始数据返回）
+│   ├── webapi/
+│   │   ├── __init__.py
+│   │   └── app.py        # FastAPI 薄服务层：health/schema/analyze
 │   └── workflow/
 │       ├── __init__.py
 │       ├── router.py     # Router Agent：意图分类（simple/complex），分发到对应链路
@@ -46,11 +50,11 @@ data_analyze/
   - `decompose()`：前置拆解，用 deepseek-reasoner 把模糊问题翻译成具体查询子任务
   - `analyze()`：后置推理，基于数据做深度分析，使用 deepseek-reasoner
 - **Report Agent**：用 deepseek-chat 格式化 Markdown 报告，输出图表配置 JSON（line/bar/null）
-- **Streamlit Web UI**（app.py）：
-  - 气泡式对话展示
-  - 侧边栏：数据库状态 + 清空对话
-  - Plotly 图表渲染（折线图/柱状图）
-  - 会话状态管理（session_state）
+- **FastAPI + Next.js Web 工作台**：
+  - `FastAPI` 只做最小 API 包装，不改 Router / SQL / Analysis / Report 链路
+  - `Next.js` 接管页面结构、输入交互、图表与表格渲染
+  - 示例预览保留在前端静态 fixture，不依赖后端
+  - 多轮历史保留在浏览器内存态，继续透传给 `router.run()`
 - DEBUG 模式：`.env` 中设 `DEBUG=true` 开启调试日志
 
 ---
@@ -103,8 +107,12 @@ data_analyze/
 # CLI 模式
 python3 main.py
 
-# Web UI 模式
-streamlit run app.py
+# Web 工作台模式（一键）
+bash run.sh
+
+# 或分别启动
+.venv/bin/python -m uvicorn src.webapi.app:app --host 127.0.0.1 --port 8000
+cd web && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 npm run dev -- --hostname 127.0.0.1 --port 3000
 ```
 
 ---

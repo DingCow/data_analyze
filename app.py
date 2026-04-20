@@ -22,7 +22,7 @@ from src import db
 from src.workflow import router
 
 
-PAGE_TITLE = "Data Analyze Agent"
+PAGE_TITLE = "数据分析助手"
 
 
 def inject_styles(layout: dict) -> None:
@@ -37,6 +37,7 @@ def inject_styles(layout: dict) -> None:
             linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
           --surface: #fcfdfe;
           --surface-subtle: #f7f9fb;
+          --surface-soft: rgba(252, 253, 254, 0.78);
           --surface-accent: #dcecf8;
           --ink: #171c22;
           --ink-soft: #5e6875;
@@ -49,12 +50,17 @@ def inject_styles(layout: dict) -> None:
           --hero-ink: #f5f7fa;
           --accent: #4a9fd8;
           --accent-soft: #dcecf8;
+          --accent-deep: #2f79b0;
           --shadow-xl: 0 18px 42px rgba(0, 0, 0, 0.10);
           --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.08);
           --shadow-md: 0 8px 22px rgba(0, 0, 0, 0.07);
-          --display: "Newsreader", "Iowan Old Style", "Palatino Linotype", "Songti SC", serif;
-          --body: "Funnel Sans", "Avenir Next", "Segoe UI", "PingFang SC", sans-serif;
-          --mono: "IBM Plex Mono", "SFMono-Regular", "SF Mono", monospace;
+          --shadow-sm: 0 8px 18px rgba(17, 22, 29, 0.05);
+          --display: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", serif;
+          --body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+          --mono: "SF Pro Text", "PingFang SC", "Helvetica Neue", "Noto Sans SC", sans-serif;
+          --title-weight: 580;
+          --title-line: 1.2;
+          --title-track: -0.015em;
           --page-max-width: {layout["content_max_width_px"]}px;
           --section-gap: {layout["content_section_gap_rem"]}rem;
         }}
@@ -176,12 +182,40 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .entry-card {{
-          padding: 1.1rem 1.35rem 0.65rem;
-          border-radius: 18px 18px 0 0;
-          background: var(--surface);
-          border: 1px solid var(--line);
+          display: grid;
+          gap: 1rem;
+          padding: 1.2rem 1.35rem 1rem;
+          border-radius: 24px 24px 0 0;
+          background:
+            linear-gradient(180deg, rgba(252, 253, 254, 0.98) 0%, rgba(247, 249, 251, 0.96) 100%);
+          border: 1px solid rgba(217, 225, 232, 0.92);
           border-bottom: 0;
           box-shadow: var(--shadow-lg);
+        }}
+
+        .entry-copy {{
+          display: grid;
+          gap: 0.72rem;
+        }}
+
+        .entry-topline {{
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1rem;
+        }}
+
+        .entry-side-note {{
+          max-width: none;
+          margin: 0;
+          color: var(--ink-muted);
+          font-family: var(--mono);
+          font-size: 0.66rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          line-height: 1.2;
+          text-align: left;
+          text-transform: uppercase;
         }}
 
         .entry-card .section-kicker,
@@ -202,11 +236,19 @@ def inject_styles(layout: dict) -> None:
           margin: 0;
           color: var(--ink) !important;
           font-family: var(--display) !important;
-          font-size: 1.85rem !important;
+          font-size: 1.95rem !important;
           font-weight: 700 !important;
-          line-height: 1.02 !important;
+          line-height: 1.08 !important;
           letter-spacing: -0.024em !important;
-          max-width: 22ch;
+          max-width: 100%;
+        }}
+
+        .entry-lead {{
+          margin: 0;
+          max-width: 34rem;
+          color: var(--ink-soft);
+          font-size: 0.9rem;
+          line-height: 1.72;
         }}
 
         .input-widget-row {{
@@ -221,23 +263,32 @@ def inject_styles(layout: dict) -> None:
           margin: 0;
         }}
 
+        div[data-testid="stTextInput"] [data-testid="stTextInputRootElement"],
+        div[data-testid="stTextInput"] [data-baseweb="base-input"] {{
+          min-height: 58px;
+          height: 58px;
+          overflow: visible;
+          align-items: stretch;
+        }}
+
         div[data-testid="stTextInput"] input {{
-          min-height: 54px;
-          border-radius: 12px;
-          border: 1px solid var(--line);
-          background: var(--surface-subtle);
+          min-height: 58px;
+          height: 58px;
+          border-radius: 15px;
+          border: 1px solid rgba(199, 210, 220, 0.92);
+          background: rgba(247, 249, 251, 0.92);
           color: var(--ink);
           font-family: var(--body);
-          font-size: 0.95rem;
+          font-size: 0.96rem;
           font-weight: 500;
-          padding-left: 1rem;
+          padding-left: 1.1rem;
           padding-right: 4.4rem;
-          box-shadow: none;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }}
 
         div[data-testid="stTextInput"] input::placeholder {{
           color: var(--ink-muted);
-          font-size: 0.82rem;
+          font-size: 0.84rem;
         }}
 
         div[data-testid="stTextInput"] input:focus {{
@@ -246,13 +297,47 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .input-ready-badge {{
-          display: flex;
+          display: inline-flex;
           justify-content: flex-end;
-          margin-top: 0.18rem;
-          color: var(--accent);
-          font-size: 0.58rem;
+          color: var(--accent-deep);
+          font-size: 0.66rem;
           font-weight: 600;
           letter-spacing: 0.12em;
+          line-height: 1;
+          pointer-events: none;
+          white-space: nowrap;
+        }}
+
+        .stColumn:has(.input-ready-badge) [data-testid="stVerticalBlock"] {{
+          position: relative;
+        }}
+
+        .stColumn:has(.input-ready-badge)
+          .stElementContainer:has([data-testid="stTextInput"])
+          + .stElementContainer:has(.input-ready-badge) {{
+          position: absolute;
+          top: 29px;
+          right: 1.2rem;
+          transform: translateY(-50%);
+          width: auto !important;
+          height: auto;
+          z-index: 3;
+          margin: 0;
+        }}
+
+        .stColumn:has(.input-ready-badge)
+          .stElementContainer:has([data-testid="stTextInput"])
+          + .stElementContainer:has(.input-ready-badge)
+          .stMarkdown {{
+          margin: 0;
+        }}
+
+        .stColumn:has(.input-ready-badge)
+          .stElementContainer:has([data-testid="stTextInput"])
+          + .stElementContainer:has(.input-ready-badge)
+          [data-testid="stMarkdownContainer"] {{
+          margin: 0;
+          padding: 0;
         }}
 
         .stButton {{
@@ -262,8 +347,8 @@ def inject_styles(layout: dict) -> None:
 
         .stButton > button {{
           width: 100%;
-          min-height: 54px;
-          border-radius: 12px;
+          min-height: 58px;
+          border-radius: 15px;
           font-family: var(--body);
           font-size: 0.88rem;
           font-weight: 600;
@@ -272,9 +357,9 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .stButton > button[kind="primary"] {{
-          background: var(--hero);
+          background: linear-gradient(180deg, #1a212a 0%, #11161d 100%);
           color: var(--hero-ink);
-          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 10px 22px rgba(17, 22, 29, 0.12);
         }}
 
         .stButton > button[kind="primary"]:hover {{
@@ -283,10 +368,10 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .stButton > button[kind="secondary"] {{
-          background: var(--surface-accent);
-          color: var(--accent);
-          border-color: transparent;
-          box-shadow: none;
+          background: rgba(220, 236, 248, 0.72);
+          color: var(--accent-deep);
+          border-color: rgba(74, 159, 216, 0.14);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
         }}
 
         .stButton > button[kind="secondary"]:hover {{
@@ -295,52 +380,61 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .stElementContainer:has(.entry-card) + [data-testid="stLayoutWrapper"] {{
-          margin-top: -0.28rem;
-          padding: 0 1.35rem 0.1rem;
-          background: var(--surface);
-          border-left: 1px solid var(--line);
-          border-right: 1px solid var(--line);
+          margin-top: -0.34rem;
+          padding: 0 1.35rem 0;
+          background: linear-gradient(180deg, rgba(252, 253, 254, 0.98) 0%, rgba(247, 249, 251, 0.96) 100%);
+          border-left: 1px solid rgba(217, 225, 232, 0.92);
+          border-right: 1px solid rgba(217, 225, 232, 0.92);
+          border-bottom: 1px solid rgba(217, 225, 232, 0.92);
+          border-bottom-left-radius: 24px;
+          border-bottom-right-radius: 24px;
+          box-shadow: var(--shadow-lg);
         }}
 
         .stElementContainer:has(.entry-card) + [data-testid="stLayoutWrapper"] > div {{
-          gap: 0.85rem;
-        }}
-
-        .stElementContainer:has(.entry-card) + [data-testid="stLayoutWrapper"] + .stElementContainer:has(.empty-prompts) .stMarkdown {{
-          margin-top: -0.08rem;
-          padding: 0 1.35rem 1rem;
-          background: var(--surface);
-          border: 1px solid var(--line);
-          border-top: 0;
-          border-bottom-left-radius: 18px;
-          border-bottom-right-radius: 18px;
-          box-shadow: var(--shadow-lg);
+          gap: 0.9rem;
         }}
 
         .empty-prompts {{
           display: grid;
-          gap: 0.2rem;
-          margin-top: 0;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0.65rem;
+          margin-top: 0.08rem;
         }}
 
         .prompt-line {{
           margin: 0;
-          color: #9ca6b3;
-          font-size: 0.56rem;
+          color: #6d7b8c;
+          font-size: 0.68rem;
           font-weight: 600;
           letter-spacing: 0.04em;
+          line-height: 1.45;
+          padding-top: 0.7rem;
+          border-top: 1px solid rgba(217, 225, 232, 0.78);
         }}
 
         .preview-shell {{
           display: grid;
-          gap: 0.7rem;
+          gap: 0.8rem;
         }}
 
         .preview-hero {{
-          padding: 1.15rem 1.25rem 1.25rem;
-          border-radius: 16px;
-          background: linear-gradient(180deg, #1b222b 0%, #202a35 100%);
+          position: relative;
+          overflow: hidden;
+          padding: 1.35rem 1.35rem 1.4rem;
+          border-radius: 22px;
+          background: linear-gradient(180deg, #151b23 0%, #202a35 100%);
           box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        }}
+
+        .preview-hero::before {{
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(circle at 80% 18%, rgba(74, 159, 216, 0.12), transparent 22%),
+            linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 40%);
+          pointer-events: none;
         }}
 
         h3.preview-title,
@@ -350,22 +444,25 @@ def inject_styles(layout: dict) -> None:
           margin: 0;
           font-family: var(--display) !important;
           font-weight: 700 !important;
-          line-height: 0.98 !important;
+          line-height: 1.08 !important;
           letter-spacing: -0.025em !important;
         }}
 
         .preview-title {{
           color: var(--hero-ink) !important;
-          font-size: 2rem !important;
-          max-width: 14ch;
+          font-size: 1.58rem !important;
+          max-width: 100%;
+          white-space: normal;
+          position: relative;
+          z-index: 1;
         }}
 
         .preview-metrics,
         .hero-metrics {{
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 0.7rem;
-          margin-top: 0.9rem;
+          gap: 0.82rem;
+          margin-top: 1rem;
         }}
 
         .preview-metric,
@@ -374,6 +471,8 @@ def inject_styles(layout: dict) -> None:
           border-radius: 12px;
           border: 1px solid var(--hero-line);
           background: var(--hero-elevated);
+          position: relative;
+          z-index: 1;
         }}
 
         .preview-metric .metric-label,
@@ -391,17 +490,20 @@ def inject_styles(layout: dict) -> None:
           color: var(--hero-ink);
           font-size: 0.9rem;
           font-weight: 600;
+          font-family: var(--body);
         }}
 
         .analysis-input-row {{
-          padding-top: 0.15rem;
+          padding: 0.25rem 0 0.2rem;
+          border-top: 1px solid rgba(217, 225, 232, 0.72);
+          border-bottom: 1px solid rgba(217, 225, 232, 0.72);
         }}
 
         .analysis-hero {{
           position: relative;
           overflow: hidden;
-          padding: 1.25rem 1.35rem 1.4rem;
-          border-radius: 20px;
+          padding: 1.4rem 1.45rem 1.45rem;
+          border-radius: 24px;
           background: var(--hero);
           box-shadow: var(--shadow-xl);
         }}
@@ -417,16 +519,16 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .hero-top {{
-          display: flex;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
           align-items: flex-start;
-          justify-content: space-between;
-          gap: 1.25rem;
+          gap: 0.9rem;
           position: relative;
           z-index: 1;
         }}
 
         .hero-copy-block {{
-          max-width: 33rem;
+          min-width: 0;
         }}
 
         .hero-kicker {{
@@ -440,40 +542,23 @@ def inject_styles(layout: dict) -> None:
         .analysis-hero h3.hero-title,
         .hero-title {{
           color: var(--hero-ink) !important;
-          font-size: 2.55rem !important;
-          max-width: 12ch;
+          font-family: var(--display) !important;
+          font-size: 1.34rem !important;
+          font-weight: 560 !important;
+          line-height: var(--title-line) !important;
+          letter-spacing: var(--title-track) !important;
+          max-width: 100%;
+          white-space: normal;
         }}
 
         .hero-copy {{
-          margin: 0.55rem 0 0;
+          margin: 0.58rem 0 0;
           color: rgba(245, 247, 250, 0.84) !important;
-          font-size: 0.92rem;
-          line-height: 1.55;
-          max-width: 36rem;
-        }}
-
-        .hero-side {{
-          display: grid;
-          justify-items: end;
-          gap: 0.3rem;
-          min-width: 5rem;
-        }}
-
-        .hero-plus {{
-          color: var(--accent);
-          font-family: var(--mono);
-          font-size: 0.82rem;
-          font-weight: 600;
-          line-height: 1;
-        }}
-
-        .hero-side-note {{
-          color: rgba(245, 247, 250, 0.36);
-          font-family: var(--mono);
-          font-size: 0.58rem;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
+          font-size: 0.94rem;
+          line-height: 1.7;
+          max-width: 32rem;
+          position: relative;
+          z-index: 1;
         }}
 
         .process-shell,
@@ -483,61 +568,92 @@ def inject_styles(layout: dict) -> None:
           position: relative;
         }}
 
+        .rail-card,
+        .evidence-card,
+        .follow-shell {{
+          padding: 1.15rem 1.2rem;
+          border-radius: 20px;
+          background: rgba(252, 253, 254, 0.78);
+          border: 1px solid rgba(217, 225, 232, 0.9);
+          box-shadow: var(--shadow-sm);
+          backdrop-filter: blur(8px);
+        }}
+
+        div[data-testid="stVerticalBlock"]:has(.chart-card-marker) {{
+          padding: 1.15rem 1.2rem;
+          border-radius: 20px;
+          background: rgba(252, 253, 254, 0.78);
+          border: 1px solid rgba(217, 225, 232, 0.9);
+          box-shadow: var(--shadow-sm);
+          backdrop-filter: blur(8px);
+        }}
+
+        .chart-card-marker {{
+          display: none;
+        }}
+
         .process-list {{
           display: grid;
-          gap: 0.72rem;
-          margin-top: 0.1rem;
+          gap: 0.82rem;
+          margin-top: 0.14rem;
         }}
 
         .process-item {{
-          padding: 0.82rem 1.1rem;
-          border-left: 2px solid var(--line);
+          padding: 0.94rem 0 0.1rem 1.08rem;
+          border-left: 2px solid rgba(74, 159, 216, 0.32);
         }}
 
         .process-meta {{
           margin: 0;
           color: var(--ink-muted);
-          font-size: 0.58rem;
+          font-size: 0.62rem;
           font-weight: 600;
           letter-spacing: 0.16em;
         }}
 
         .process-body {{
-          margin: 0.34rem 0 0;
+          margin: 0.4rem 0 0;
           color: var(--ink);
           font-family: var(--display);
-          line-height: 1.12;
+          line-height: 1.2;
           letter-spacing: -0.015em;
         }}
 
         .process-body.primary {{
-          font-size: 1.55rem;
-          font-weight: 700;
+          font-size: 1.28rem;
+          font-weight: var(--title-weight);
+          line-height: var(--title-line);
+          letter-spacing: var(--title-track);
         }}
 
         .process-body.secondary {{
-          font-size: 1.2rem;
-          font-weight: 600;
+          color: #495767;
+          font-size: 0.96rem;
+          font-weight: 500;
+          line-height: 1.6;
+          font-family: var(--body);
         }}
 
         h2.judgment-title,
         .judgment-title {{
-          margin: 0.05rem 0 0.6rem;
+          margin: 0.05rem 0 0.72rem;
           color: var(--ink) !important;
           font-family: var(--display) !important;
-          font-size: 2.05rem !important;
-          font-weight: 700 !important;
-          line-height: 1.02 !important;
-          letter-spacing: -0.025em !important;
-          max-width: 17ch;
+          font-size: 1.28rem !important;
+          font-weight: var(--title-weight) !important;
+          line-height: var(--title-line) !important;
+          letter-spacing: var(--title-track) !important;
+          max-width: 100%;
+          white-space: normal;
         }}
 
         .judgment-copy,
         .judgment-copy p,
         .judgment-copy li {{
           color: var(--ink-soft);
-          font-size: 1rem;
-          line-height: 1.7;
+          font-size: 0.98rem;
+          line-height: 1.78;
+          font-family: var(--body);
         }}
 
         .judgment-copy p {{
@@ -550,17 +666,14 @@ def inject_styles(layout: dict) -> None:
           margin: 0.45rem 0 0;
         }}
 
-        .evidence-card {{
-          padding-top: 0.15rem;
-        }}
-
         .evidence-title {{
           margin: 0 0 0.6rem;
           color: var(--ink);
           font-family: var(--display);
-          font-size: 1.65rem;
-          font-weight: 700;
-          line-height: 1.08;
+          font-size: 1.28rem;
+          font-weight: var(--title-weight);
+          line-height: var(--title-line);
+          letter-spacing: var(--title-track);
         }}
 
         .evidence-rule {{
@@ -581,24 +694,25 @@ def inject_styles(layout: dict) -> None:
         .evidence-meta {{
           margin: 0;
           color: var(--ink-muted);
-          font-size: 0.62rem;
+          font-size: 0.64rem;
           font-weight: 600;
           letter-spacing: 0.12em;
+          font-family: var(--mono);
         }}
 
         .evidence-note {{
           margin: 0.5rem 0 0;
           color: var(--ink-soft);
           font-family: var(--mono);
-          font-size: 0.66rem;
+          font-size: 0.62rem;
           font-weight: 600;
           letter-spacing: 0.04em;
         }}
 
         div[data-testid="stPlotlyChart"] {{
           margin: 0 !important;
-          padding: 0.9rem 0.95rem;
-          border-radius: 10px;
+          padding: 0.95rem 1rem;
+          border-radius: 14px;
           background: var(--surface-subtle);
           border: 1px solid var(--line);
           box-shadow: none;
@@ -610,7 +724,7 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .table-shell {{
-          border-radius: 10px;
+          border-radius: 14px;
           overflow: hidden;
           background: var(--surface-subtle);
           border: 1px solid var(--line);
@@ -628,12 +742,12 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .data-table thead th {{
-          padding: 0.82rem 0.92rem;
+          padding: 0.9rem 0.92rem;
           text-align: left;
           background: #f2f5f8;
           color: var(--ink-soft);
           font-family: var(--mono);
-          font-size: 0.64rem;
+          font-size: 0.68rem;
           font-weight: 600;
           letter-spacing: 0.08em;
           text-transform: uppercase;
@@ -642,10 +756,11 @@ def inject_styles(layout: dict) -> None:
         }}
 
         .data-table tbody td {{
-          padding: 0.88rem 0.92rem;
+          padding: 0.94rem 0.92rem;
           color: var(--ink);
-          font-size: 0.84rem;
+          font-size: 0.88rem;
           border-bottom: 1px solid #e6edf3;
+          font-family: var(--body);
         }}
 
         .data-table tbody tr:last-child td {{
@@ -654,25 +769,26 @@ def inject_styles(layout: dict) -> None:
 
         .follow-list {{
           display: grid;
-          margin-top: 0.12rem;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0.85rem;
+          margin-top: 0.18rem;
         }}
 
         .follow-item {{
-          padding: 0.82rem 0;
-          border-bottom: 1px solid var(--line);
-        }}
-
-        .follow-item:last-child {{
-          border-bottom: none;
+          height: 100%;
+          padding: 1.08rem 1.05rem;
+          border: 1px solid rgba(217, 225, 232, 0.9);
+          border-radius: 16px;
+          background: linear-gradient(180deg, rgba(252, 253, 254, 0.82) 0%, rgba(247, 249, 251, 0.9) 100%);
         }}
 
         .follow-question {{
           margin: 0;
           color: var(--ink);
           font-family: var(--display);
-          font-size: 1.18rem;
+          font-size: 0.98rem;
           font-weight: 600;
-          line-height: 1.15;
+          line-height: 1.5;
         }}
 
         @media (max-width: 900px) {{
@@ -685,11 +801,21 @@ def inject_styles(layout: dict) -> None:
             font-size: 2.45rem;
           }}
 
+          .entry-topline {{
+            grid-template-columns: 1fr;
+            display: grid;
+          }}
+
           .entry-title,
           .hero-title,
           .preview-title,
           .judgment-title {{
             max-width: none;
+          }}
+
+          .empty-prompts,
+          .follow-list {{
+            grid-template-columns: 1fr;
           }}
 
           .hero-top,
@@ -700,8 +826,13 @@ def inject_styles(layout: dict) -> None:
             display: grid;
           }}
 
-          .hero-side {{
-            justify-items: start;
+          .analysis-hero,
+          .rail-card,
+          .evidence-card,
+          .follow-shell,
+          .preview-hero {{
+            padding-left: 1.05rem;
+            padding-right: 1.05rem;
           }}
         }}
         </style>
@@ -739,7 +870,8 @@ def build_layout_config() -> dict:
         "metric_card_padding_y_rem": 0.82,
         "metric_card_padding_x_rem": 0.92,
         "metric_value_size_rem": 0.9,
-        "input_columns": [0.64, 0.22, 0.14],
+        "input_columns": [0.56, 0.44],
+        "input_button_columns": [0.56, 0.44],
         "page_top_padding_rem": 1.35,
         "page_bottom_padding_rem": 4.2,
     }
@@ -775,44 +907,44 @@ def build_result_panel(answer: str, chart_config: dict | None, raw_rows: list[di
 def build_example_questions() -> list[dict]:
     """提供分析态页尾的追问建议。"""
     return [
-        {"title": "Which of the weak cities also show the sharpest order decline by district or time band?", "question": ""},
-        {"title": "Compared with the previous quarter, which cities changed because of volume and which because of price?", "question": ""},
-        {"title": "If we only focus on the system underperforming cities, where should the investigation start next?", "question": ""},
+        {"title": "哪些表现较弱的城市，在区县或时段维度上也出现了最明显的订单下滑？", "question": ""},
+        {"title": "和上一季度相比，哪些城市的变化主要来自销量，哪些主要来自价格？", "question": ""},
+        {"title": "如果只聚焦表现最差的几个城市，下一步应该先从哪里开始排查？", "question": ""},
     ]
 
 
 def build_empty_prompt_lines() -> list[str]:
     """提供空状态输入板下方的三条轻量提示。"""
     return [
-        "1. Top 10 declining cities",
-        "2. Order vs price mix",
-        "3. Quarterly anomaly scan",
+        "1. 下滑最明显的前 10 个城市",
+        "2. 订单与价格结构拆分",
+        "3. 季度异常波动扫描",
     ]
 
 
 def build_quick_preview_payload() -> dict:
     """构造一份固定样例，调 UI 时直接进入结果页。"""
     raw_rows = [
-        {"City": "Zhongshan", "Revenue Drop": "-16.4%", "Orders": 23822},
-        {"City": "Shenzhen", "Revenue Drop": "-12.7%", "Orders": 18302},
-        {"City": "Zhuhai", "Revenue Drop": "-8.5%", "Orders": 15123},
-        {"City": "Foshan", "Revenue Drop": "-6.2%", "Orders": 13518},
+        {"城市": "中山", "收入下滑": "-16.4%", "订单量": 23822},
+        {"城市": "深圳", "收入下滑": "-12.7%", "订单量": 18302},
+        {"城市": "珠海", "收入下滑": "-8.5%", "订单量": 15123},
+        {"城市": "佛山", "收入下滑": "-6.2%", "订单量": 13518},
     ]
-    answer = """## Core judgment
+    answer = """## 核心判断
 
-Most underperforming cities are being dragged by order loss, not pricing.
+表现较弱的城市，主要是被订单流失拖累，而不是价格变化。
 
-The result flow isolates the cities with the sharpest revenue decline, then compares order volume and pricing movement to see which driver dominates. That changes the follow-up: the next move is not a pricing review first, but a deeper look into demand, activity, and location-level order concentration in the worst-performing cities."""
+结果页会先找出收入下滑最明显的城市，再比较订单量与价格变化，判断主要驱动因素。这会直接影响下一步动作：与其先做价格复盘，不如先深入看需求、活跃度，以及差城市在区域层面的订单集中度。"""
     chart_config = {
         "type": "bar",
-        "x": "City",
-        "y": ["Orders"],
-        "title": "Quarterly revenue decline by city cluster",
+        "x": "城市",
+        "y": ["订单量"],
+        "title": "城市群季度收入下滑对比",
     }
     assistant_text = build_assistant_message(answer, raw_rows)
     return {
         "messages": [
-            {"role": "user", "content": "Which cities lost the most revenue momentum over the last quarter?"},
+            {"role": "user", "content": "上个季度哪些城市的收入动能下滑最明显？"},
             {"role": "assistant", "content": assistant_text},
         ],
         "latest_result": {
@@ -834,9 +966,9 @@ def activate_quick_preview() -> None:
 def build_workspace_preview_items() -> list[dict]:
     """提供空状态下深色预期板的指标。"""
     return [
-        {"label": "Judgment", "value": "One clear answer"},
-        {"label": "Visuals", "value": "Chart + table"},
-        {"label": "Follow-up", "value": "Next questions"},
+        {"label": "判断", "value": "一个明确结论"},
+        {"label": "证据", "value": "图表 + 表格"},
+        {"label": "追问", "value": "下一步问题"},
     ]
 
 
@@ -887,8 +1019,8 @@ def build_header_model(db_error: str | None, latest_result: dict | None) -> dict
     """构造顶部题签与状态胶囊。"""
     return {
         "title": PAGE_TITLE,
-        "eyebrow": "+ ANALYSIS ATELIER",
-        "status_text": "DATA SOURCE OFFLINE" if db_error else "DATA SOURCE ONLINE",
+        "eyebrow": "+ 分析工作台",
+        "status_text": "数据源离线" if db_error else "数据源在线",
         "status_dot_class": "is-error" if db_error else "is-online",
     }
 
@@ -897,8 +1029,8 @@ def summarize_answer_for_ui(answer: str) -> tuple[str, str]:
     """把 markdown 结果压成适合 Hero 与正文区的短标题和摘要。"""
     if not answer:
         return (
-            "A centered result board appears first, before the detail trail begins.",
-            "The first view prioritizes a single judgment, then reveals the evidence modules in the same reading path.",
+            "页面会先给出一个居中的结果面板，再向下展开完整分析链路。",
+            "首屏先突出一个核心判断，再沿同一条阅读路径逐步展开证据模块。",
         )
 
     text = re.sub(r"```.*?```", "", answer, flags=re.S)
@@ -917,20 +1049,65 @@ def summarize_answer_for_ui(answer: str) -> tuple[str, str]:
 
     if not lines:
         return (
-            "A centered result board appears first, before the detail trail begins.",
-            "The first view prioritizes a single judgment, then reveals the evidence modules in the same reading path.",
+            "页面会先给出一个居中的结果面板，再向下展开完整分析链路。",
+            "首屏先突出一个核心判断，再沿同一条阅读路径逐步展开证据模块。",
         )
 
     title = lines[1] if len(lines) > 1 and lines[0].lower() in {"core judgment", "核心判断"} else lines[0]
     summary_candidates = [
         line for line in lines if line != title and line.lower() not in {"core judgment", "核心判断"}
     ]
-    summary = summary_candidates[0] if summary_candidates else "The result flow keeps the judgment short first, then opens the detailed evidence below."
+    summary = summary_candidates[0] if summary_candidates else "结果区会先压缩成一句判断，再在下方展开详细证据。"
     if len(title) > 88:
         title = title[:85].rstrip() + "..."
     if len(summary) > 180:
         summary = summary[:177].rstrip() + "..."
     return title, summary
+
+
+def strip_judgment_heading_and_lead(answer: str, insight_title: str) -> str:
+    """移除 markdown 中与页面标题重复的开头内容，避免 Judgment 区重复。"""
+    if not answer:
+        return answer
+
+    def normalize_text(value: str) -> str:
+        value = re.sub(r"^#+\s*", "", value.strip())
+        value = re.sub(r"\*\*([^*]+)\*\*", r"\1", value)
+        value = re.sub(r"`([^`]+)`", r"\1", value)
+        value = re.sub(r"[。；;:：,.，、!?！？\s]+$", "", value)
+        return value.strip()
+
+    lines = answer.splitlines()
+    cleaned: list[str] = []
+    skipped_heading = False
+    skipped_title = False
+    normalized_title = normalize_text(insight_title)
+
+    for raw_line in lines:
+        line = raw_line.strip()
+
+        if not skipped_heading and re.match(r"^##\s*(核心判断|Core judgment)\s*$", line, flags=re.I):
+            skipped_heading = True
+            continue
+
+        normalized_line = normalize_text(line)
+
+        if not skipped_title and normalized_line == normalized_title:
+            skipped_title = True
+            continue
+
+        if not skipped_title and normalized_title and normalized_line.startswith(normalized_title):
+            skipped_title = True
+            remainder = normalized_line[len(normalized_title) :].lstrip("。；;:：,.，、!?！？ ")
+            if remainder:
+                cleaned.append(remainder)
+            continue
+
+        cleaned.append(raw_line)
+
+    text = "\n".join(cleaned)
+    text = re.sub(r"^\s*\n+", "", text)
+    return text.strip()
 
 
 def _extract_question_pairs(messages: list[dict]) -> list[dict]:
@@ -976,22 +1153,22 @@ def build_conversation_panel(messages: list[dict], latest_result: dict | None) -
 
     items = [
         {
-            "meta": "QUESTION 01 · USER",
-            "content": latest_question or "Which cities lost the most revenue momentum over the last quarter?",
+            "meta": "问题 01 · 用户",
+            "content": latest_question or "上个季度哪些城市的收入动能下滑最明显？",
             "tone": "primary",
         },
         {
-            "meta": "STEP 02 · ASSISTANT",
-            "content": "The result flow isolates the cities with the sharpest revenue decline, then compares order volume and pricing movement to see which driver dominates."
+            "meta": "步骤 02 · 助手",
+            "content": "结果页会先找出收入下滑最明显的城市，再比较订单量与价格变化，判断真正的主导因素。"
             if answer
-            else "The result board is prepared first, then the detail trail arranges the evidence in the same reading path.",
+            else "结果面板会先出现，随后再沿同一条阅读路径铺开展示证据。",
             "tone": "secondary",
         },
         {
-            "meta": "STEP 03 · EVIDENCE",
-            "content": f"{len(raw_rows)} row{'s' if len(raw_rows) != 1 else ''} are ready for comparison, and the current view {'includes a chart and a table' if has_visual else 'starts from the structured table first'}."
+            "meta": "步骤 03 · 证据",
+            "content": f"当前已准备好 {len(raw_rows)} 行数据供对比，页面会{'同时给出图表和表格' if has_visual else '先从结构化表格开始展示'}。"
             if raw_rows
-            else "Evidence will appear below the result board as soon as the first query returns rows.",
+            else "一旦首轮查询返回数据，结果面板下方就会接出对应证据。",
             "tone": "secondary",
         },
     ]
@@ -1019,19 +1196,19 @@ def build_workspace_sections(latest_result: dict | None) -> dict:
     return {
         "mode": "analysis",
         "summary": {
-            "kicker": "+ RESULT PATTERN",
+            "kicker": "+ 结果概览",
             "title": hero_title,
             "summary": hero_copy,
             "metric_items": [
-                {"label": "Mode", "value": "Multi-step" if answer and raw_rows else "Direct"},
-                {"label": "Rows", "value": str(len(raw_rows))},
-                {"label": "Visuals", "value": f"{chart_count} chart" if chart_count else "Table only"},
+                {"label": "模式", "value": "多步分析" if answer and raw_rows else "直接结果"},
+                {"label": "行数", "value": str(len(raw_rows))},
+                {"label": "图形", "value": f"{chart_count} 张图" if chart_count else "仅表格"},
             ],
         },
-        "insight_title": "Most underperforming cities are being dragged by order loss, not pricing.",
-        "chart_title": chart_config.get("title") if chart_config else "Quarterly revenue decline by city cluster",
-        "table_title": "City-level revenue drop snapshot",
-        "follow_up_title": "+ NEXT QUESTIONS",
+        "insight_title": "表现较弱的城市，主要是被订单流失拖累，而不是价格变化。",
+        "chart_title": chart_config.get("title") if chart_config else "城市群季度收入下滑对比",
+        "table_title": "城市收入下滑快照",
+        "follow_up_title": "+ 下一步问题",
         "sections": {
             "show_insight": bool(answer),
             "show_chart": bool(chart_config and raw_rows),
@@ -1039,8 +1216,8 @@ def build_workspace_sections(latest_result: dict | None) -> dict:
         },
         "follow_ups": follow_ups,
         "preview_items": build_workspace_preview_items(),
-        "chart_note": "Key markets" if raw_rows else "",
-        "table_note": f"{min(len(raw_rows), 3)} cities account for most of the contraction." if raw_rows else "",
+        "chart_note": "重点城市" if raw_rows else "",
+        "table_note": f"前 {min(len(raw_rows), 3)} 个城市贡献了大部分下滑。" if raw_rows else "",
     }
 
 
@@ -1051,27 +1228,31 @@ def build_input_model(db_error: str | None, latest_result: dict | None) -> dict:
 
     if db_error:
         return {
-            "entry_kicker": "+ BEGIN WITH ONE QUESTION",
-            "entry_title": "Start from a business judgment, not from a dashboard.",
+            "entry_kicker": "+ 从一个问题开始",
+            "entry_title": "先从业务判断出发，而不是先看仪表盘。",
             "placeholder": "请先修复数据库连接后再提问",
-            "button_label": "Generate",
-            "preview_label": "Preview",
-            "state_badge": "OFFLINE",
+            "button_label": "开始分析",
+            "preview_label": "查看示例",
+            "state_badge": "离线",
             "disabled": True,
             "prompt_lines": build_empty_prompt_lines(),
+            "entry_lead": "先把现象问清楚，页面会先给一句判断，再把图表、表格和下一步追问依次接出来。",
+            "entry_side_note": "问题输入优先",
         }
 
     return {
-        "entry_kicker": "+ BEGIN WITH ONE QUESTION",
-        "entry_title": "Start from a business judgment, not from a dashboard.",
-        "placeholder": "Why are some cities losing revenue momentum?"
+        "entry_kicker": "+ 从一个问题开始",
+        "entry_title": "先从业务判断出发，而不是先看仪表盘。",
+        "placeholder": "为什么有些城市的收入动能在走弱？"
         if not has_result
-        else "Which of the weak cities also show the sharpest order decline?",
-        "button_label": "Generate",
-        "preview_label": "Preview",
-        "state_badge": "READY",
+        else "哪些表现较弱的城市，同时也出现了最明显的订单下滑？",
+        "button_label": "开始分析",
+        "preview_label": "查看示例",
+        "state_badge": "就绪",
         "disabled": False,
         "prompt_lines": build_empty_prompt_lines(),
+        "entry_lead": "把业务现象翻成一个可验证的问题，结果页会先给结论，再把证据和下一步动作接出来。",
+        "entry_side_note": "问题输入优先",
     }
 
 
@@ -1192,7 +1373,7 @@ def build_chart_layout() -> dict:
     return dict(
         paper_bgcolor="rgba(255,255,255,0)",
         plot_bgcolor="#F7F9FB",
-        font=dict(color="#171C22", family="Funnel Sans, Avenir Next, Segoe UI, PingFang SC, sans-serif"),
+        font=dict(color="#171C22", family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC, sans-serif"),
         margin=dict(l=12, r=12, t=10, b=28),
         xaxis=dict(
             gridcolor="rgba(0,0,0,0)",
@@ -1320,8 +1501,8 @@ def _build_conversation_thread_html(items: list[dict]) -> str:
         for item in items
     )
     return (
-        '<div class="process-shell">'
-        '<p class="section-kicker">+ PROCESS THREAD</p>'
+        '<div class="rail-card process-shell">'
+        '<p class="section-kicker">+ 分析过程</p>'
         f'<div class="process-list">{thread_items}</div>'
         "</div>"
     )
@@ -1346,7 +1527,6 @@ def _render_summary_hero(summary: dict) -> None:
         """
         for item in summary["metric_items"]
     )
-    hero_marks = "".join('<span class="hero-plus">+</span>' for _ in range(4))
     st.markdown(
         f"""
         <div class="analysis-hero">
@@ -1356,16 +1536,40 @@ def _render_summary_hero(summary: dict) -> None:
               <h3 class="hero-title">{html.escape(summary["title"])}</h3>
               <p class="hero-copy">{html.escape(summary["summary"])}</p>
             </div>
-            <div class="hero-side">
-              {hero_marks}
-              <span class="hero-side-note">detail trail ready</span>
-            </div>
           </div>
           {'<div class="hero-metrics">' + metric_cards + '</div>' if summary["metric_items"] else ''}
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+
+def _render_chart_shell(chart_config: dict, raw_rows: list[dict], title: str) -> None:
+    """使用 Streamlit 容器渲染完整图表卡，避免 HTML 包裹组件时出现空白容器。"""
+    with st.container():
+        st.markdown('<div class="chart-card-marker"></div>', unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="evidence-shell">
+              <p class="section-kicker">+ 证据图表</p>
+              <h3 class="evidence-title">{html.escape(title)}</h3>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        render_chart(chart_config, raw_rows)
+        st.markdown(
+            f"""
+            <div class="evidence-shell">
+              <div class="evidence-rule"></div>
+              <div class="evidence-meta-row">
+                <p class="evidence-meta">图形视图</p>
+                <p class="evidence-meta">行数 {len(raw_rows)}</p>
+              </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 
 def _render_follow_up_cards(follow_ups: list[dict], title: str) -> None:
@@ -1408,7 +1612,7 @@ def _render_data_table_shell(raw_rows: list[dict], title: str) -> None:
     st.markdown(
         f"""
         <div class="evidence-shell">
-          <p class="section-kicker">+ EVIDENCE TABLE</p>
+          <p class="section-kicker">+ 证据表格</p>
           <div class="evidence-card">
             <h3 class="evidence-title">{html.escape(title)}</h3>
             <div class="table-shell">
@@ -1421,8 +1625,8 @@ def _render_data_table_shell(raw_rows: list[dict], title: str) -> None:
             </div>
             <div class="evidence-rule"></div>
             <div class="evidence-meta-row">
-              <p class="evidence-meta">Rows {len(raw_rows)}</p>
-              <p class="evidence-meta">Snapshot table</p>
+              <p class="evidence-meta">行数 {len(raw_rows)}</p>
+              <p class="evidence-meta">快照表</p>
             </div>
           </div>
         </div>
@@ -1445,10 +1649,11 @@ def _render_workspace_preview(previews: list[dict]) -> None:
     st.markdown(
         f"""
         <div class="preview-shell">
-          <p class="section-kicker">+ WHAT ARRIVES AFTER YOU ASK</p>
+          <p class="section-kicker">+ 提问之后会出现什么</p>
           <div class="preview-hero">
-            <p class="section-kicker">+ RESULT PREVIEW</p>
-            <h3 class="preview-title">A centered result board appears first, before the detail trail begins.</h3>
+            <p class="section-kicker">+ 结果预览</p>
+            <h3 class="preview-title">页面会先给出一个居中的结果面板，再向下展开完整分析链路。</h3>
+            <p class="hero-copy">先用一句话锁定判断，再把图表、明细表和下一步追问串成同一条阅读路径。</p>
             <div class="preview-metrics">{cards}</div>
           </div>
         </div>
@@ -1476,52 +1681,42 @@ def render_workspace(latest_result: dict | None) -> None:
 
     _render_summary_hero(workspace["summary"])
     st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
-    render_conversation_panel(st.session_state.messages, latest_result)
+    rail_cols = st.columns([1, 1], gap="small", vertical_alignment="top")
 
-    if sections["show_insight"] and answer:
-        insight_title, _ = summarize_answer_for_ui(answer)
-        st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
-        st.markdown(
-            f"""
-            <div class="judgment-shell">
-              <p class="section-kicker">+ CORE JUDGMENT</p>
-              <h2 class="judgment-title">{html.escape(insight_title)}</h2>
-              <div class="judgment-copy">{_render_simple_markdown_html(answer)}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+    with rail_cols[0]:
+        render_conversation_panel(st.session_state.messages, latest_result)
 
-    if sections["show_chart"] and chart_config and raw_rows:
-        st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
-        st.markdown(
-            f"""
-            <div class="evidence-shell">
-              <p class="section-kicker">+ EVIDENCE VISUAL</p>
-              <div class="evidence-card">
-                <h3 class="evidence-title">{html.escape(workspace["chart_title"])}</h3>
-            """,
-            unsafe_allow_html=True,
-        )
-        render_chart(chart_config, raw_rows)
-        st.markdown(
-            f"""
-                <div class="evidence-rule"></div>
-                <div class="evidence-meta-row">
-                  <p class="evidence-meta">Visual cluster</p>
-                  <p class="evidence-meta">Rows {len(raw_rows)}</p>
+    with rail_cols[1]:
+        if sections["show_insight"] and answer:
+            insight_title, _ = summarize_answer_for_ui(answer)
+            judgment_body = strip_judgment_heading_and_lead(answer, insight_title)
+            st.markdown(
+                f"""
+                <div class="rail-card judgment-shell">
+                  <p class="section-kicker">+ 核心判断</p>
+                  <h2 class="judgment-title">{html.escape(insight_title)}</h2>
+                  <div class="judgment-copy">{_render_simple_markdown_html(judgment_body)}</div>
                 </div>
-              </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+                """,
+                unsafe_allow_html=True,
+            )
 
-    if sections["show_table"] and raw_rows:
+    if sections["show_chart"] or sections["show_table"]:
         st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
-        _render_data_table_shell(raw_rows, workspace["table_title"])
-        if workspace["table_note"]:
-            st.markdown(f'<p class="evidence-note">{html.escape(workspace["table_note"])}</p>', unsafe_allow_html=True)
+        evidence_cols = st.columns([1, 1], gap="small", vertical_alignment="top")
+
+        with evidence_cols[0]:
+            if sections["show_chart"] and chart_config and raw_rows:
+                _render_chart_shell(chart_config, raw_rows, workspace["chart_title"])
+
+        with evidence_cols[1]:
+            if sections["show_table"] and raw_rows:
+                _render_data_table_shell(raw_rows, workspace["table_title"])
+                if workspace["table_note"]:
+                    st.markdown(
+                        f'<p class="evidence-note">{html.escape(workspace["table_note"])}</p>',
+                        unsafe_allow_html=True,
+                    )
 
     if workspace["follow_ups"]:
         st.markdown('<div class="atelier-gap"></div>', unsafe_allow_html=True)
@@ -1540,11 +1735,23 @@ def render_input_bar(schema: str | None, db_error: str | None, latest_result: di
     if latest_result:
         st.markdown('<div class="analysis-input-row">', unsafe_allow_html=True)
     else:
+        prompt_lines = "".join(
+            f'<p class="prompt-line">{html.escape(line)}</p>' for line in model["prompt_lines"]
+        )
         st.markdown(
             f"""
             <div class="entry-card">
-              <p class="section-kicker">{html.escape(model["entry_kicker"])}</p>
-              <h2 class="entry-title">{html.escape(model["entry_title"])}</h2>
+              <div class="entry-copy">
+                <div class="entry-topline">
+                  <div>
+                    <p class="section-kicker">{html.escape(model["entry_kicker"])}</p>
+                    <h2 class="entry-title">{html.escape(model["entry_title"])}</h2>
+                  </div>
+                  <p class="entry-side-note">{html.escape(model["entry_side_note"])}</p>
+                </div>
+                <p class="entry-lead">{html.escape(model["entry_lead"])}</p>
+                <div class="empty-prompts">{prompt_lines}</div>
+              </div>
             """,
             unsafe_allow_html=True,
         )
@@ -1564,29 +1771,27 @@ def render_input_bar(schema: str | None, db_error: str | None, latest_result: di
         st.markdown("</div>", unsafe_allow_html=True)
 
     with input_cols[1]:
-        generate_clicked = st.button(
-            model["button_label"],
-            key="input_generate",
-            type="primary",
-            use_container_width=True,
-            disabled=bool(model["disabled"]),
-        )
-
-    with input_cols[2]:
-        preview_clicked = st.button(
-            model["preview_label"],
-            key="input_preview",
-            type="secondary",
-            use_container_width=True,
-        )
+        button_cols = st.columns(layout["input_button_columns"], gap="small", vertical_alignment="center")
+        with button_cols[0]:
+            generate_clicked = st.button(
+                model["button_label"],
+                key="input_generate",
+                type="primary",
+                use_container_width=True,
+                disabled=bool(model["disabled"]),
+            )
+        with button_cols[1]:
+            preview_clicked = st.button(
+                model["preview_label"],
+                key="input_preview",
+                type="secondary",
+                use_container_width=True,
+            )
 
     if latest_result:
         st.markdown("</div>", unsafe_allow_html=True)
     else:
-        prompt_lines = "".join(
-            f'<p class="prompt-line">{html.escape(line)}</p>' for line in model["prompt_lines"]
-        )
-        st.markdown(f'<div class="empty-prompts">{prompt_lines}</div></div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     if preview_clicked:
         activate_quick_preview()

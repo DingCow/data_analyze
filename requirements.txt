@@ -1,0 +1,9 @@
+fastapi
+openai
+pandas
+plotly
+python-dotenv
+rich
+socksio
+streamlit
+uvicorn
