@@ -8,3 +8,5 @@ output/
 .venv/
 web/node_modules/
 web/.next/
+.playwright-cli/
+.vscode/
