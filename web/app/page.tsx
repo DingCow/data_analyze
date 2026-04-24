@@ -6,7 +6,13 @@ import ReactMarkdown from "react-markdown";
 import { PlotChart } from "../components/plot-chart";
 import { analyzeQuestion, fetchSchemaStatus } from "../lib/api";
 import { previewBoard, previewPayload } from "../lib/fixtures";
-import { buildAssistantPreview, buildFollowUps, buildProcessItems, summarizeAnswer } from "../lib/ui";
+import {
+  buildAssistantPreview,
+  buildFollowUps,
+  buildJudgmentBreakdown,
+  buildProcessItems,
+  summarizeAnswer,
+} from "../lib/ui";
 import { Message, ResultPayload, SchemaStatus } from "../lib/types";
 
 const EMPTY_STATUS: SchemaStatus = {
@@ -29,6 +35,10 @@ export default function Page() {
   const answerParts = useMemo(() => summarizeAnswer(latestResult?.answer ?? ""), [latestResult?.answer]);
   const processItems = useMemo(() => buildProcessItems(messages, latestResult), [messages, latestResult]);
   const followUps = useMemo(() => buildFollowUps(latestResult), [latestResult]);
+  const judgmentRows = useMemo(
+    () => buildJudgmentBreakdown(latestResult, answerParts),
+    [answerParts, latestResult],
+  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -82,7 +92,6 @@ export default function Page() {
 
   return (
     <main className="page-shell">
-      <div className="page-noise" />
       <section className="page">
         <header className="topbar">
           <div className="topbar-copy">
@@ -128,23 +137,34 @@ export default function Page() {
         </section>
 
         {!latestResult && (
+          <>
           <section className="empty-board">
             <div className="empty-copy">
-              <p className="eyebrow">+ 结果预期</p>
-              <h2>先从业务判断出发，再把结论、证据和追问排成一条阅读链路。</h2>
+              <p className="eyebrow">+ 开始分析</p>
+              <h2>提出一个业务问题，系统会整理成一份可继续追问的分析页。</h2>
               <p>
-                输入一个你真正关心的问题，页面会把分析过程整理成更容易阅读和继续追问的工作台。
+                适合排查收入、订单、城市、渠道、时段等变化原因。
               </p>
+              <div className="example-list" aria-label="可直接尝试的问题">
+                {followUps.map((questionText) => (
+                  <button key={questionText} onClick={() => setQuestion(questionText)} type="button">
+                    {questionText}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="preview-grid">
+            <aside className="preview-grid" aria-label="结果结构">
+              <p className="side-title">结果结构</p>
               {previewBoard.map((item) => (
                 <article className="preview-metric" key={item.label}>
                   <span>{item.label}</span>
                   <strong>{item.value}</strong>
                 </article>
               ))}
-            </div>
+            </aside>
           </section>
+          <p className="schema-strip">数据源 SQLite · 字段已读取 · 可开始分析</p>
+          </>
         )}
 
         {latestResult && (
@@ -154,18 +174,18 @@ export default function Page() {
               <h2>{answerParts.title}</h2>
               <p className="hero-summary">{answerParts.summary}</p>
               <div className="hero-metrics">
-                <article>
+                <div>
                   <span>模式</span>
                   <strong>{latestResult.answer ? "多步分析" : "直接查询"}</strong>
-                </article>
-                <article>
+                </div>
+                <div>
                   <span>行数</span>
                   <strong>{latestResult.raw_rows.length}</strong>
-                </article>
-                <article>
+                </div>
+                <div>
                   <span>图形</span>
                   <strong>{latestResult.chart_config?.type ? "1 张图" : "未生成"}</strong>
-                </article>
+                </div>
               </div>
             </section>
 
@@ -182,9 +202,16 @@ export default function Page() {
                 </div>
               </article>
               <article className="panel-card">
-                <p className="eyebrow">+ 核心判断</p>
-                <h3 className="panel-title">{answerParts.title}</h3>
-                <div className="markdown-body">
+                <p className="eyebrow">+ 判断拆解</p>
+                <div className="judgment-list">
+                  {judgmentRows.map((item) => (
+                    <div className="judgment-row" key={item.label}>
+                      <span>{item.label}</span>
+                      <strong>{item.value}</strong>
+                    </div>
+                  ))}
+                </div>
+                <div className="markdown-body is-supporting">
                   <ReactMarkdown>{latestResult.answer || "本轮没有生成文字结论，但下方保留了结构化查询结果。"}</ReactMarkdown>
                 </div>
               </article>
@@ -246,9 +273,14 @@ export default function Page() {
               <p className="eyebrow">+ 下一步问题</p>
               <div className="follow-up-grid">
                 {followUps.map((questionText) => (
-                  <article className="follow-up-item" key={questionText}>
-                    <p>{questionText}</p>
-                  </article>
+                  <button
+                    className="follow-up-item"
+                    key={questionText}
+                    onClick={() => setQuestion(questionText)}
+                    type="button"
+                  >
+                    {questionText}
+                  </button>
                 ))}
               </div>
             </section>

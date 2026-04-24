@@ -7,7 +7,7 @@ src/workflow/router.py —— Router Agent
 """
 
 from typing import Optional
-from src.llm import client, debug
+from src.llm import FAST_MODEL, NON_THINKING_EXTRA_BODY, client, debug
 from src.workflow import sql, analysis, report
 
 # 意图判断的系统提示词（轻量级，只做分类）
@@ -31,16 +31,17 @@ ROUTER_SYSTEM_PROMPT = """你是一个问题分类器，判断用户的问题属
 def classify(question: str) -> str:
     """
     判断问题复杂度，返回 'simple' 或 'complex'。
-    用 deepseek-chat 做分类，成本低、速度快。
+    用 deepseek-v4-flash 做分类，关闭思考模式以保持响应轻量。
     """
     response = client.chat.completions.create(
-        model="deepseek-chat",
+        model=FAST_MODEL,
         messages=[
             {"role": "system", "content": ROUTER_SYSTEM_PROMPT},
             {"role": "user", "content": question},
         ],
         temperature=0,
         max_tokens=10,  # 只需要一个词，严格限制输出长度
+        extra_body=NON_THINKING_EXTRA_BODY,
     )
     # 统一转小写，去除空格，防止模型多输出空格或大写
     return response.choices[0].message.content.strip().lower()

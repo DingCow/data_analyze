@@ -4,12 +4,12 @@ src/workflow/report.py —— Report Agent
   1. 接收 Analysis Agent 的推理结论，整理成清晰的 Markdown 报告
   2. 根据原始数据的列结构，决定画什么图表，输出图表配置 JSON
   不做任何新的推理或数据查询，只负责格式化和图表决策。
-  使用 deepseek-chat（格式化输出不需要推理能力，chat 速度更快）。
+  使用 deepseek-v4-flash，并关闭思考模式（格式化输出不需要推理能力）。
 """
 
 import json
 from typing import Optional
-from src.llm import client, debug
+from src.llm import FAST_MODEL, NON_THINKING_EXTRA_BODY, client, debug
 
 # Report Agent 的系统提示词
 SYSTEM_PROMPT = """你是一个专业的报告撰写助手。
@@ -77,7 +77,7 @@ def run(question: str, analysis: str, raw_rows: list[dict]) -> tuple[str, Option
     debug("[Report Agent] 开始格式化报告")
 
     response = client.chat.completions.create(
-        model="deepseek-chat",   # 格式化输出用 chat，速度快
+        model=FAST_MODEL,   # 格式化输出用轻量模型，速度快
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
@@ -86,6 +86,7 @@ def run(question: str, analysis: str, raw_rows: list[dict]) -> tuple[str, Option
         max_tokens=4096,
         # 强制模型输出 JSON 格式，避免输出多余文字
         response_format={"type": "json_object"},
+        extra_body=NON_THINKING_EXTRA_BODY,
     )
 
     raw = response.choices[0].message.content

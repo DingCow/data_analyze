@@ -44,12 +44,12 @@ data_analyze/
 - CLI 多轮对话（保留最近 10 轮历史）
 
 ### Phase 2：完整 Agent 框架 ✅
-- **Router Agent**：用 deepseek-chat 做意图分类（simple/complex），低成本快速路由
+- **Router Agent**：用 deepseek-v4-flash 做意图分类（simple/complex），关闭思考模式，低成本快速路由
 - **SQL Agent**：工具调用循环（最多30次），只透传最后一次有数据的查询结果
 - **Analysis Agent**：
-  - `decompose()`：前置拆解，用 deepseek-reasoner 把模糊问题翻译成具体查询子任务
-  - `analyze()`：后置推理，基于数据做深度分析，使用 deepseek-reasoner
-- **Report Agent**：用 deepseek-chat 格式化 Markdown 报告，输出图表配置 JSON（line/bar/null）
+  - `decompose()`：前置拆解，用 deepseek-v4-pro 思考模式把模糊问题翻译成具体查询子任务
+  - `analyze()`：后置推理，基于数据做深度分析，使用 deepseek-v4-pro 思考模式
+- **Report Agent**：用 deepseek-v4-flash 格式化 Markdown 报告，输出图表配置 JSON（line/bar/null）
 - **FastAPI + Next.js Web 工作台**：
   - `FastAPI` 只做最小 API 包装，不改 Router / SQL / Analysis / Report 链路
   - `Next.js` 接管页面结构、输入交互、图表与表格渲染
@@ -82,17 +82,17 @@ data_analyze/
 ```
 用户自然语言问题
        ↓
-  Router Agent（deepseek-chat，意图分类）
+  Router Agent（deepseek-v4-flash，意图分类，关闭思考）
   ├── simple → SQL Agent → 直接转 Markdown 表格返回
   └── complex
         ↓
-  Analysis.decompose()（deepseek-reasoner，前置拆解）
+  Analysis.decompose()（deepseek-v4-pro，前置拆解，开启思考）
         ↓
-  SQL Agent（deepseek-chat，工具调用取数）
+  SQL Agent（deepseek-v4-flash，工具调用取数，关闭思考）
         ↓
-  Analysis.analyze()（deepseek-reasoner，后置推理）
+  Analysis.analyze()（deepseek-v4-pro，后置推理，开启思考）
         ↓
-  Report Agent（deepseek-chat，格式化 Markdown + 图表配置）
+  Report Agent（deepseek-v4-flash，格式化 Markdown + 图表配置，关闭思考）
         ↓
   返回：(markdown文字, chart_config, raw_rows)
         ↓

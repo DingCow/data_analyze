@@ -48,8 +48,8 @@ Agent 在**解释**问题、方案、代码时，请遵循：
 |---|---|
 | 模型服务 | DeepSeek，通过 OpenAI 兼容接口调用 |
 | `base_url` | `https://api.deepseek.com` |
-| 普通模型 | `deepseek-chat` |
-| 推理模型 | `deepseek-reasoner` |
+| 普通模型 | `deepseek-v4-flash`（关闭思考模式） |
+| 推理模型 | `deepseek-v4-pro`（开启思考模式） |
 | 数据库 | SQLite |
 
 ---

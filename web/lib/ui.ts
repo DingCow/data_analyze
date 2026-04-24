@@ -1,5 +1,15 @@
 import { Message, ResultPayload } from "./types";
 
+export type AnswerSummary = {
+  title: string;
+  summary: string;
+};
+
+export type JudgmentBreakdownItem = {
+  label: string;
+  value: string;
+};
+
 export function stripMarkdown(text: string): string {
   return text
     .replace(/```[\s\S]*?```/g, "")
@@ -11,7 +21,7 @@ export function stripMarkdown(text: string): string {
     .trim();
 }
 
-export function summarizeAnswer(answer: string): { title: string; summary: string } {
+export function summarizeAnswer(answer: string): AnswerSummary {
   const cleaned = stripMarkdown(answer);
   if (!cleaned) {
     return {
@@ -31,6 +41,34 @@ export function summarizeAnswer(answer: string): { title: string; summary: strin
   const summary =
     contentLines.slice(1).join(" ").trim() || "下方会继续展开完整的证据链路。";
   return { title, summary };
+}
+
+export function buildJudgmentBreakdown(
+  result: ResultPayload | null,
+  answerParts: AnswerSummary,
+): JudgmentBreakdownItem[] {
+  if (!result?.answer && !result?.raw_rows.length) {
+    return [
+      { label: "主要信号", value: "等待分析结果" },
+      { label: "排除因素", value: "需要先取得证据" },
+      { label: "下一步", value: "输入问题后继续展开" },
+    ];
+  }
+
+  const hasChart = Boolean(result.chart_config?.type);
+  const firstRow = result.raw_rows[0];
+  const firstColumn = firstRow ? Object.keys(firstRow)[0] : "";
+  const firstValue = firstColumn ? String(firstRow[firstColumn]) : "";
+  const focusTarget = firstValue ? `${firstValue} 等重点对象` : "重点对象";
+
+  return [
+    { label: "主要信号", value: answerParts.title },
+    {
+      label: "排除因素",
+      value: hasChart ? "结合图表与表格排除次要波动" : "需要结合明细继续确认",
+    },
+    { label: "下一步", value: `围绕 ${focusTarget} 继续下钻` },
+  ];
 }
 
 export function buildAssistantPreview(result: ResultPayload): string {

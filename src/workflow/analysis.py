@@ -1,12 +1,12 @@
 """
 src/workflow/analysis.py —— Analysis Agent
 职责：
-  负责两个阶段的推理工作（都使用 deepseek-reasoner）：
+  负责两个阶段的推理工作（都使用 deepseek-v4-pro 思考模式）：
   1. 前置拆解：把抽象的用户问题拆解成具体的查询子任务
   2. 后置分析：接收 SQL Agent 查好的数据，做深度推理
 """
 
-from src.llm import client, debug
+from src.llm import REASONING_MODEL, THINKING_EXTRA_BODY, THINKING_REASONING_EFFORT, client, debug
 
 # 前置拆解的系统提示词：把抽象问题翻译成具体查询意图
 DECOMPOSE_SYSTEM_PROMPT = """你是一个数据分析规划师，擅长把模糊的业务问题拆解成可执行的数据查询任务。
@@ -56,13 +56,14 @@ def decompose(schema: str, question: str) -> str:
     debug("[Analysis Agent] 开始拆解问题")
 
     response = client.chat.completions.create(
-        model="deepseek-reasoner",   # 拆解也需要推理能力
+        model=REASONING_MODEL,   # 拆解需要更强推理能力
         messages=[
             {"role": "system", "content": DECOMPOSE_SYSTEM_PROMPT.format(schema=schema)},
             {"role": "user", "content": f"用户问题：{question}"},
         ],
-        temperature=0,
         max_tokens=1024,
+        reasoning_effort=THINKING_REASONING_EFFORT,
+        extra_body=THINKING_EXTRA_BODY,
     )
 
     return response.choices[0].message.content
@@ -99,13 +100,14 @@ def analyze(question: str, raw_rows: list[dict]) -> tuple[str, list[dict]]:
     debug("[Analysis Agent] 开始推理分析")
 
     response = client.chat.completions.create(
-        model="deepseek-reasoner",
+        model=REASONING_MODEL,
         messages=[
             {"role": "system", "content": ANALYZE_SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
         ],
-        temperature=0,
         max_tokens=4096,
+        reasoning_effort=THINKING_REASONING_EFFORT,
+        extra_body=THINKING_EXTRA_BODY,
     )
 
     # 返回推理结论文字 + 透传原始数据行（供 Report Agent 决定画什么图）

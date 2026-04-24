@@ -3,11 +3,11 @@ src/workflow/sql.py —— SQL Agent
 职责：
   专职负责数据查询。接收用户问题，自主决定执行哪些 SQL，
   把查到的原始数据整理后返回。不做分析，只取数。
-  始终使用 deepseek-chat（速度快，查数不需要推理能力）。
+  始终使用 deepseek-v4-flash，并关闭思考模式（速度快，查数不需要推理能力）。
 """
 
 import json
-from src.llm import client, TOOLS, execute_tool_with_data, debug
+from src.llm import FAST_MODEL, NON_THINKING_EXTRA_BODY, client, TOOLS, execute_tool_with_data, debug
 
 # SQL Agent 的系统提示词
 SYSTEM_PROMPT_TEMPLATE = """你是一个专业的数据查询助手，负责从新能源充电桩与停车场运营数据库中取数。
@@ -60,11 +60,12 @@ def run(schema: str, question: str, history: list[dict]) -> list[dict]:
         debug(f"[SQL Agent] 第 {i+1} 轮")
 
         response = client.chat.completions.create(
-            model="deepseek-chat",   # 查数固定用 chat，快且够用
+            model=FAST_MODEL,   # 查数固定用轻量模型，快且够用
             messages=messages,
             tools=TOOLS,
             temperature=0,
             max_tokens=2048,
+            extra_body=NON_THINKING_EXTRA_BODY,
         )
 
         choice = response.choices[0]

@@ -18,6 +18,14 @@ load_dotenv()
 # DEBUG 模式：在 .env 里加 DEBUG=true 即可开启调试日志
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
+# DeepSeek 新模型配置。
+# 轻量任务关闭思考模式，避免工具调用链路需要额外处理 reasoning_content。
+FAST_MODEL = "deepseek-v4-flash"
+REASONING_MODEL = "deepseek-v4-pro"
+NON_THINKING_EXTRA_BODY = {"thinking": {"type": "disabled"}}
+THINKING_EXTRA_BODY = {"thinking": {"type": "enabled"}}
+THINKING_REASONING_EFFORT = "high"
+
 # 初始化 DeepSeek 客户端，所有 Agent 都从这里 import 使用
 client = OpenAI(
     api_key=os.getenv("DEEPSEEK_API_KEY"),

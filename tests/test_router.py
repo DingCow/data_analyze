@@ -3,6 +3,9 @@ from unittest.mock import patch
 
 import main
 from rich.table import Table
+from src import llm
+from src.workflow import analysis
+from src.workflow import report
 from src.workflow import router
 from src.workflow import sql
 
@@ -137,6 +140,70 @@ class TestSqlAgent(unittest.TestCase):
         result = sql.run("fake schema", "测试问题", [])
 
         self.assertEqual(result, [])
+        self.assertEqual(mock_create.call_args_list[0].kwargs["model"], llm.FAST_MODEL)
+        self.assertEqual(mock_create.call_args_list[0].kwargs["extra_body"], llm.NON_THINKING_EXTRA_BODY)
+
+
+class TestModelConfiguration(unittest.TestCase):
+    """验证各 Agent 已切换到 DeepSeek 新模型配置。"""
+
+    @patch("src.workflow.router.client.chat.completions.create")
+    def test_router_uses_fast_model_without_thinking(self, mock_create):
+        class FakeMessage:
+            content = "simple"
+
+        class FakeChoice:
+            message = FakeMessage()
+
+        class FakeResponse:
+            choices = [FakeChoice()]
+
+        mock_create.return_value = FakeResponse()
+
+        self.assertEqual(router.classify("查一下订单数"), "simple")
+        self.assertEqual(mock_create.call_args.kwargs["model"], llm.FAST_MODEL)
+        self.assertEqual(mock_create.call_args.kwargs["extra_body"], llm.NON_THINKING_EXTRA_BODY)
+
+    @patch("src.workflow.analysis.client.chat.completions.create")
+    def test_analysis_uses_reasoning_model_with_thinking(self, mock_create):
+        class FakeMessage:
+            content = "最终查询目标：按城市汇总收入"
+
+        class FakeChoice:
+            message = FakeMessage()
+
+        class FakeResponse:
+            choices = [FakeChoice()]
+
+        mock_create.return_value = FakeResponse()
+
+        result = analysis.decompose("fake schema", "分析收入变化")
+
+        self.assertIn("最终查询目标", result)
+        self.assertEqual(mock_create.call_args.kwargs["model"], llm.REASONING_MODEL)
+        self.assertEqual(mock_create.call_args.kwargs["extra_body"], llm.THINKING_EXTRA_BODY)
+        self.assertEqual(mock_create.call_args.kwargs["reasoning_effort"], llm.THINKING_REASONING_EFFORT)
+        self.assertNotIn("temperature", mock_create.call_args.kwargs)
+
+    @patch("src.workflow.report.client.chat.completions.create")
+    def test_report_uses_fast_model_without_thinking(self, mock_create):
+        class FakeMessage:
+            content = '{"markdown":"## 结论\\n收入下降","chart":null}'
+
+        class FakeChoice:
+            message = FakeMessage()
+
+        class FakeResponse:
+            choices = [FakeChoice()]
+
+        mock_create.return_value = FakeResponse()
+
+        markdown, chart_config = report.run("分析收入", "收入下降", [{"城市": "中山", "收入": 100}])
+
+        self.assertIn("收入下降", markdown)
+        self.assertIsNone(chart_config)
+        self.assertEqual(mock_create.call_args.kwargs["model"], llm.FAST_MODEL)
+        self.assertEqual(mock_create.call_args.kwargs["extra_body"], llm.NON_THINKING_EXTRA_BODY)
 
 
 class TestWebUiHelpers(unittest.TestCase):
