@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, TypedDict
 
 
 @dataclass
@@ -29,3 +29,22 @@ class WorkflowResult:
             "raw_rows": self.raw_rows,
             "db_error": self.error,
         }
+
+
+class AgentGraphState(TypedDict, total=False):
+    """LangGraph 在节点之间传递的共享状态。
+
+    可以把它理解成原来 router.run 里的局部变量集合，只是现在显式放进
+    state，方便节点之间按字段交接数据。
+    """
+
+    schema: str
+    question: str
+    history: list[dict]
+    intent: str
+    subtasks: str
+    raw_rows: list[dict[str, Any]]
+    analysis_text: str
+    answer: str
+    chart_config: dict[str, Any] | None
+    trace: list[str]

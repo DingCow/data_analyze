@@ -47,12 +47,34 @@ class LegacyWorkflowRunner:
         )
 
 
+class LangGraphWorkflowRunner:
+    """用 LangGraph 表达 router 编排的 runner。"""
+
+    name = "langgraph"
+
+    def run(self, schema: str, question: str, history: list[dict]) -> WorkflowResult:
+        from src.agent_runtime.graph import run_router_graph
+
+        try:
+            return run_router_graph(schema, question, history)
+        except Exception as exc:
+            return WorkflowResult(
+                answer="",
+                chart_config=None,
+                raw_rows=[],
+                trace=["langgraph.error"],
+                error=str(exc),
+            )
+
+
 def get_runner(name: str = "legacy") -> WorkflowRunner:
     """按名称返回 runner。
 
-    先只开放 legacy，后续会在这里挂上 langchain / langgraph。
+    先开放 legacy / langgraph，后续可以继续挂 langchain。
     """
     normalized = name.strip().lower()
     if normalized == "legacy":
         return LegacyWorkflowRunner()
+    if normalized == "langgraph":
+        return LangGraphWorkflowRunner()
     raise ValueError(f"未知 runner：{name}")
