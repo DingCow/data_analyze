@@ -29,7 +29,29 @@ export default function Page() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchSchemaStatus().then(setSchemaStatus);
+    let active = true;
+
+    async function refreshStatus() {
+      const nextStatus = await fetchSchemaStatus();
+      if (active) {
+        setSchemaStatus(nextStatus);
+        if (nextStatus.status === "online") {
+          setError("");
+        }
+      }
+    }
+
+    refreshStatus();
+    const timer = window.setInterval(() => {
+      if (active) {
+        refreshStatus();
+      }
+    }, 8000);
+
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
   }, []);
 
   const answerParts = useMemo(() => summarizeAnswer(latestResult?.answer ?? ""), [latestResult?.answer]);
@@ -53,6 +75,13 @@ export default function Page() {
 
     const nextHistory = [...messages];
     try {
+      const nextStatus = await fetchSchemaStatus();
+      setSchemaStatus(nextStatus);
+      if (nextStatus.status === "offline") {
+        setError(nextStatus.detail || "数据源暂时不可用，请稍后再试。");
+        return;
+      }
+
       const result = await analyzeQuestion(trimmed, nextHistory);
       if (result.db_error) {
         setSchemaStatus({ status: "offline", detail: result.db_error });
@@ -124,7 +153,7 @@ export default function Page() {
                 }
               />
             </div>
-            <button className="primary-button" disabled={loading || schemaStatus.status === "offline"} type="submit">
+            <button className="primary-button" disabled={loading} type="submit">
               {loading ? "分析中..." : "开始分析"}
             </button>
             <button className="secondary-button" onClick={handlePreview} type="button">
@@ -211,34 +240,28 @@ export default function Page() {
                     </div>
                   ))}
                 </div>
-                <div className="markdown-body is-supporting">
-                  <ReactMarkdown>{latestResult.answer || "本轮没有生成文字结论，但下方保留了结构化查询结果。"}</ReactMarkdown>
-                </div>
               </article>
             </section>
 
-            <section className="two-column evidence-grid">
-              <article className="panel-card evidence-card">
-                <p className="eyebrow">+ 证据图表</p>
-                <h3 className="panel-title">{latestResult.chart_config?.title ?? "结构化结果视图"}</h3>
+            <section className="evidence-grid">
+              <article className="panel-card evidence-card evidence-combined">
+                <div className="evidence-head">
+                  <div>
+                    <p className="eyebrow">+ 证据视图</p>
+                    <h3 className="panel-title">{latestResult.chart_config?.title ?? "结构化结果视图"}</h3>
+                  </div>
+                  <div className="evidence-stats">
+                    <span>{latestResult.chart_config?.type ? "图表 + 明细" : "明细表"}</span>
+                    <strong>{latestResult.raw_rows.length} 行</strong>
+                  </div>
+                </div>
                 <div className="chart-shell">
                   <PlotChart chartConfig={latestResult.chart_config} rows={latestResult.raw_rows} />
                   {!latestResult.chart_config?.type && (
                     <div className="empty-plot">这轮结果不适合直接画图，保留下方表格做明细确认。</div>
                   )}
                 </div>
-                <div className="evidence-meta">
-                  <span>图形视图</span>
-                  <strong>行数 {latestResult.raw_rows.length}</strong>
-                </div>
-              </article>
-
-              <article className="panel-card evidence-card">
-                <p className="eyebrow">+ 证据表格</p>
-                <h3 className="panel-title">
-                  {latestResult.answer ? "城市收入下滑快照" : "本轮查询结果"}
-                </h3>
-                <div className="table-shell">
+                <div className="table-shell compact-table">
                   {latestResult.raw_rows.length > 0 ? (
                     <table>
                       <thead>
@@ -251,8 +274,10 @@ export default function Page() {
                       <tbody>
                         {latestResult.raw_rows.map((row, index) => (
                           <tr key={`${index}-${Object.values(row).join("-")}`}>
-                            {Object.keys(latestResult.raw_rows[0]).map((column) => (
-                              <td key={column}>{row[column] ?? ""}</td>
+                            {Object.keys(latestResult.raw_rows[0]).map((column, columnIndex) => (
+                              <td className={columnIndex > 0 ? "numeric-cell" : ""} key={column}>
+                                {row[column] ?? ""}
+                              </td>
                             ))}
                           </tr>
                         ))}
@@ -262,10 +287,14 @@ export default function Page() {
                     <div className="empty-plot">本轮没有查到结构化结果。</div>
                   )}
                 </div>
-                <div className="evidence-meta">
-                  <span>快照表</span>
-                  <strong>{latestResult.raw_rows.length} 行</strong>
-                </div>
+                {latestResult.answer && (
+                  <details className="report-details">
+                    <summary>查看完整报告</summary>
+                    <div className="markdown-body">
+                      <ReactMarkdown>{latestResult.answer}</ReactMarkdown>
+                    </div>
+                  </details>
+                )}
               </article>
             </section>
 

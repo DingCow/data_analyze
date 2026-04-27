@@ -10,6 +10,56 @@ export type JudgmentBreakdownItem = {
   value: string;
 };
 
+const MAX_SUMMARY_LENGTH = 118;
+const MAX_PREVIEW_LENGTH = 86;
+
+function compactText(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+function truncateText(text: string, maxLength: number): string {
+  const compacted = compactText(text);
+  if (compacted.length <= maxLength) {
+    return compacted;
+  }
+  return `${compacted.slice(0, maxLength).replace(/[，,。；;：:\s]+$/u, "")}…`;
+}
+
+function isMarkdownTableLine(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed.includes("|")) {
+    return false;
+  }
+  if (/^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?$/u.test(trimmed)) {
+    return true;
+  }
+  return trimmed.split("|").filter((part) => part.trim()).length >= 3;
+}
+
+function isSectionHeadingLine(line: string): boolean {
+  return /^#{1,6}\s+/u.test(line) || /^\d+[.、]\s*\S+/u.test(line);
+}
+
+function extractReadableLines(answer: string): string[] {
+  return answer
+    .replace(/```[\s\S]*?```/g, "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => !isMarkdownTableLine(line))
+    .filter((line) => !/^[-*_]{3,}$/u.test(line))
+    .filter((line) => !isSectionHeadingLine(line))
+    .map((line) =>
+      line
+        .replace(/^[-*]\s+/u, "")
+        .replace(/^#+\s*/u, "")
+        .replace(/`([^`]+)`/g, "$1")
+        .replace(/\*\*([^*]+)\*\*/g, "$1")
+        .trim(),
+    )
+    .filter(Boolean);
+}
+
 export function stripMarkdown(text: string): string {
   return text
     .replace(/```[\s\S]*?```/g, "")
@@ -22,24 +72,21 @@ export function stripMarkdown(text: string): string {
 }
 
 export function summarizeAnswer(answer: string): AnswerSummary {
-  const cleaned = stripMarkdown(answer);
-  if (!cleaned) {
+  const readableLines = extractReadableLines(answer);
+  const fallback = stripMarkdown(answer);
+  if (!readableLines.length && !fallback) {
     return {
       title: "这轮分析完成后，会先给出一个核心判断。",
       summary: "随后继续向下展开证据图表、明细表格以及下一步追问。",
     };
   }
 
-  const lines = cleaned
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
   const headingPattern = /^(核心判断|Core judgment)$/i;
-  const contentLines = headingPattern.test(lines[0] ?? "") ? lines.slice(1) : lines;
-  const title = contentLines[0] ?? cleaned;
+  const contentLines = headingPattern.test(readableLines[0] ?? "") ? readableLines.slice(1) : readableLines;
+  const title = truncateText(contentLines[0] ?? fallback, 72);
   const summary =
-    contentLines.slice(1).join(" ").trim() || "下方会继续展开完整的证据链路。";
+    truncateText(contentLines.slice(1).join(" ").trim(), MAX_SUMMARY_LENGTH) ||
+    "下方会继续展开完整的证据链路。";
   return { title, summary };
 }
 
@@ -50,7 +97,7 @@ export function buildJudgmentBreakdown(
   if (!result?.answer && !result?.raw_rows.length) {
     return [
       { label: "主要信号", value: "等待分析结果" },
-      { label: "排除因素", value: "需要先取得证据" },
+      { label: "关键依据", value: "需要先取得证据" },
       { label: "下一步", value: "输入问题后继续展开" },
     ];
   }
@@ -64,8 +111,10 @@ export function buildJudgmentBreakdown(
   return [
     { label: "主要信号", value: answerParts.title },
     {
-      label: "排除因素",
-      value: hasChart ? "结合图表与表格排除次要波动" : "需要结合明细继续确认",
+      label: "关键依据",
+      value: hasChart
+        ? `已生成图表，并保留 ${result.raw_rows.length} 行明细`
+        : `已保留 ${result.raw_rows.length} 行明细用于核对`,
     },
     { label: "下一步", value: `围绕 ${focusTarget} 继续下钻` },
   ];
@@ -73,13 +122,13 @@ export function buildJudgmentBreakdown(
 
 export function buildAssistantPreview(result: ResultPayload): string {
   if (result.answer) {
-    const { summary } = summarizeAnswer(result.answer);
-    return summary;
+    const { title } = summarizeAnswer(result.answer);
+    return truncateText(`已完成查询、分析和报告整理：${title}`, MAX_PREVIEW_LENGTH);
   }
   if (!result.raw_rows.length) {
     return "这一轮没有查到可展示的数据。";
   }
-  return `当前已准备好 ${result.raw_rows.length} 行数据供对比，页面会同步展示图表和表格。`;
+  return `已准备好 ${result.raw_rows.length} 行结构化数据，可继续核对明细。`;
 }
 
 export function buildProcessItems(messages: Message[], latestResult: ResultPayload | null) {
@@ -96,7 +145,7 @@ export function buildProcessItems(messages: Message[], latestResult: ResultPaylo
     {
       meta: "步骤 02 · 助手",
       body:
-        lastAssistant?.content ??
+        lastAssistant ? truncateText(lastAssistant.content, MAX_PREVIEW_LENGTH) :
         "系统会把问题翻译成查询与分析链路，再把结果组织成可阅读的结论与证据。",
       tone: "secondary",
     },

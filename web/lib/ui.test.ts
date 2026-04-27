@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { buildJudgmentBreakdown, summarizeAnswer } from "./ui";
+import { buildAssistantPreview, buildJudgmentBreakdown, summarizeAnswer } from "./ui";
 
 test("空字符串时返回默认标题和摘要", () => {
   const result = summarizeAnswer("");
@@ -15,6 +15,24 @@ test("会跳过中文章节标题并提取真正结论", () => {
 
   assert.equal(result.title, "表现较弱的城市主要是被订单流失拖累。");
   assert.equal(result.summary, "下一步需要检查活跃度。");
+});
+
+test("摘要会过滤 Markdown 表格和编号段落", () => {
+  const result = summarizeAnswer(`## 核心判断
+
+2023年深圳地区充电业务呈现爆发式增长，核心指标均实现数倍提升。
+
+1. 业务规模高速扩张
+
+| 指标 | 1月 | 12月 | 增长倍数 |
+|------|------|------|----------|
+| 订单总数 | 2,183 | 18,417 | 8.4倍 |
+
+4月为第一个增长爆发点，5月订单数翻倍。`);
+
+  assert.equal(result.title, "2023年深圳地区充电业务呈现爆发式增长，核心指标均实现数倍提升。");
+  assert.equal(result.summary, "4月为第一个增长爆发点，5月订单数翻倍。");
+  assert.equal(result.summary.includes("|"), false);
 });
 
 test("会跳过英文章节标题并提取真正结论", () => {
@@ -43,7 +61,7 @@ test("判断拆解在空结果时返回可展示的默认行", () => {
 
   assert.deepEqual(result, [
     { label: "主要信号", value: "等待分析结果" },
-    { label: "排除因素", value: "需要先取得证据" },
+    { label: "关键依据", value: "需要先取得证据" },
     { label: "下一步", value: "输入问题后继续展开" },
   ]);
 });
@@ -60,6 +78,28 @@ test("判断拆解会基于结果标题和首行对象生成工作台摘要", ()
   );
 
   assert.equal(result[0].value, "中山主要被订单流失拖累。");
-  assert.equal(result[1].value, "结合图表与表格排除次要波动");
+  assert.equal(result[1].label, "关键依据");
+  assert.equal(result[1].value, "已生成图表，并保留 1 行明细");
   assert.equal(result[2].value, "围绕 中山 等重点对象 继续下钻");
+});
+
+test("助手预览只保留短摘要，不暴露完整报告", () => {
+  const preview = buildAssistantPreview({
+    answer: `## 核心判断
+
+深圳增长明显。
+
+| 指标 | 1月 | 12月 |
+|------|------|------|
+| 订单 | 1 | 10 |
+
+后续还有非常长非常长非常长非常长非常长非常长非常长非常长非常长非常长的分析。`,
+    chart_config: null,
+    raw_rows: [{ 城市: "深圳" }],
+    db_error: null,
+  });
+
+  assert.match(preview, /^已完成查询、分析和报告整理：深圳增长明显。/);
+  assert.equal(preview.includes("|"), false);
+  assert.ok(preview.length <= 90);
 });

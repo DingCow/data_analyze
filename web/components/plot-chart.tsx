@@ -25,6 +25,13 @@ function formatTick(value: number) {
   return String(Math.round(value));
 }
 
+function formatValueLabel(value: number) {
+  if (Math.abs(value) >= 10000) {
+    return `${Math.round(value / 1000)}k`;
+  }
+  return String(Math.round(value));
+}
+
 export function PlotChart({ chartConfig, rows }: PlotChartProps) {
   const yColumn = chartConfig?.y?.[0] ?? null;
   if (!chartConfig?.type || !chartConfig.x || !yColumn || !rows.length) {
@@ -42,8 +49,8 @@ export function PlotChart({ chartConfig, rows }: PlotChartProps) {
   }
 
   const width = 640;
-  const height = 320;
-  const padding = { top: 26, right: 28, bottom: 52, left: 64 };
+  const height = chartConfig.type === "line" ? 278 : 300;
+  const padding = { top: 24, right: 28, bottom: points.length > 8 ? 64 : 46, left: 64 };
   const innerWidth = width - padding.left - padding.right;
   const innerHeight = height - padding.top - padding.bottom;
   const step = innerWidth / points.length;
@@ -58,6 +65,13 @@ export function PlotChart({ chartConfig, rows }: PlotChartProps) {
     })
     .join(" ");
 
+  const labelStride = Math.max(1, Math.ceil(points.length / 6));
+  const shouldAngleLabels = points.length > 8;
+  const maxPointIndex = points.findIndex((point) => point.value === maxValue);
+  const maxPoint = points[maxPointIndex];
+  const maxPointX = maxPointIndex >= 0 ? padding.left + step * maxPointIndex + step / 2 : 0;
+  const maxPointY = chartBottom - (maxValue / maxValue) * innerHeight;
+
   return (
     <svg
       aria-label={chartConfig.title ?? "证据图表"}
@@ -65,10 +79,10 @@ export function PlotChart({ chartConfig, rows }: PlotChartProps) {
       role="img"
       viewBox={`0 0 ${width} ${height}`}
     >
-      {ticks.map((tick) => {
+      {ticks.map((tick, index) => {
         const y = chartBottom - (tick / maxValue) * innerHeight;
         return (
-          <g key={tick}>
+          <g key={`${tick}-${index}`}>
             <line className="chart-grid-line" x1={padding.left} x2={width - padding.right} y1={y} y2={y} />
             <text className="chart-tick" textAnchor="end" x={padding.left - 12} y={y + 4}>
               {formatTick(tick)}
@@ -103,10 +117,28 @@ export function PlotChart({ chartConfig, rows }: PlotChartProps) {
           );
         })
       )}
+      {maxPoint && (
+        <g className="chart-highlight">
+          <line x1={maxPointX} x2={maxPointX} y1={maxPointY - 8} y2={chartBottom} />
+          <text textAnchor="middle" x={maxPointX} y={Math.max(18, maxPointY - 14)}>
+            最高 {formatValueLabel(maxPoint.value)}
+          </text>
+        </g>
+      )}
       {points.map((point, index) => {
+        if (index % labelStride !== 0 && index !== points.length - 1) {
+          return null;
+        }
         const x = padding.left + step * index + step / 2;
         return (
-          <text className="chart-label" key={point.label} textAnchor="middle" x={x} y={height - 20}>
+          <text
+            className="chart-label"
+            key={point.label}
+            textAnchor={shouldAngleLabels ? "end" : "middle"}
+            transform={shouldAngleLabels ? `rotate(-35 ${x} ${height - 24})` : undefined}
+            x={x}
+            y={height - 24}
+          >
             {point.label}
           </text>
         );
