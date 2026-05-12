@@ -9,7 +9,7 @@
 ## 文件结构
 
 ```
-data_analyze/
+data-analyze/
 ├── .env                  # DEEPSEEK_API_KEY（不得硬编码）
 ├── AGENTS.md             # 项目协作规则与输出约束
 ├── main.py               # CLI 主入口，多轮对话循环，调用 get_runner("langgraph")
